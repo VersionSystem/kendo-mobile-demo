@@ -21,9 +21,10 @@
     var bootstrap = function() {
         $(function() {
             app.mobileApp = new kendo.mobile.Application(document.body, {
+                platform: "android",
                 transition: 'slide',
                 skin: 'nova',
-                initial: 'components/homeView/view.html'
+                initial: 'components/loginView/view.html'
             });
 
             kendo.bind($('.navigation-link-text'), app.navigation.viewModel);
@@ -31,21 +32,31 @@
     };
 
     $(document).ready(function() {
+
         var navigationShowMoreView = $('#navigation-show-more-view').find('ul'),
             allItems = $('#navigation-container-more').find('a'),
             navigationShowMoreContent = '';
 
-            allItems.each(function(index) {
-                navigationShowMoreContent += '<li>' + allItems[index].outerHTML + '</li>';
-            });
+        allItems.each(function(index) {
+            navigationShowMoreContent += '<li>' + allItems[index].outerHTML + '</li>';
+        });
 
-             navigationShowMoreView.html(navigationShowMoreContent);
+        navigationShowMoreView.html(navigationShowMoreContent);
         kendo.bind($('#navigation-show-more-view'), app.showMore.viewModel);
+
+        app.notification = $("#notify");
+
     });
 
     app.listViewClick = function _listViewClick(item) {
         var tabstrip = app.mobileApp.view().footer.find('.km-tabstrip').data('kendoMobileTabStrip');
         tabstrip.clear();
+    };
+
+    app.showNotification = function(message, time) {
+        var autoHideAfter = time ? time : 3000;
+        app.notification.find('.notify-pop-up__content').html(message);
+        app.notification.fadeIn("slow").delay(autoHideAfter).fadeOut("slow");
     };
 
     if (window.cordova) {

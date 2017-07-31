@@ -22,8 +22,8 @@
     "Portrait",
     "Landscape"
   ],
-  "AndroidHardwareAcceleration": "true",
-  "iOSStatusBarStyle": "Default",
+  "AndroidHardwareAcceleration": "True",
+  "iOSStatusBarStyle": "Hidden",
   "Framework": "Cordova",
   "WP8TileTitle": "",
   "WP8Publisher": "",
@@ -41,5 +41,15 @@
     "ID_RESOLUTION_WVGA",
     "ID_RESOLUTION_WXGA",
     "ID_RESOLUTION_HD720P"
-  ]
+  ],
+  "CordovaPluginVariables": {},
+  "CorePlugins": [
+    "cordova-plugin-dialogs",
+    "cordova-plugin-inappbrowser",
+    "cordova-plugin-network-information",
+    "cordova-plugin-splashscreen",
+    "cordova-plugin-vibration",
+    "cordova-plugin-whitelist"
+  ],
+  "iOSDeploymentTarget": "6.0"
 }
