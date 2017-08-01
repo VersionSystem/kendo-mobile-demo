@@ -9,6 +9,7 @@
     <link href="styles/main.css" rel="stylesheet" />
 
     <script src="cordova.js"></script>
+    <script src="js/moment.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
     <script src="kendo/js/kendo.all.min.js"></script>
 
@@ -140,38 +141,49 @@
     <div id="testScheduler" ></div>
     <script id="patientEditorTemplate" type="text/x-kendo-template">
     
-    <ul  data-role="listview" data-style="group">
-      <li>
-        
-          <label class="k-label km-required ">
-          Name
-          <input type="text" class="k-input k-textbox" name="Name" placeholder="English Name" required="required" data-bind="value:lastName" style="width:60%" >
-          
-          </label>
-          <span class='k-invalid-msg' style="display: none;width:100%" data-for='Name'></span>
-      </li>
-      
-      <li>
-      <label class="k-label" >Arrival<input  type="checkbox"  id="arrival"  data-bind="checked:arrival"></label>
-      </li>
-      <li>
-      <label class="k-label">
-      Tel
-      <input type="text" class="k-input k-textbox" name="Tel." data-bind="value:patientTel" required="required" style="width:60%">
-      </label>
-
-      </li>
-      <li>
-
-        <label class="k-label km-required">
-            Card
-            <!--<div id="medicalCardId" class="k-input k-textbox" style="width:60%;padding-top:0px;"></div>-->
-            <input id="medicalCardId" name="Card" data-role="dropdownlist"
-                   data-auto-bind="false"
+    <div class="k-edit-label" >
+        <label for="name">Name</label>
+    </div>
+    <div data-container-for="name" class="k-edit-field" style="padding-left:10px;">
+        <input type="text" class="k-input k-textbox" name="Name"  required="required" data-bind="value:lastName" style="width:60%" >
+    </div>
+    <div class="k-edit-label km-required" >
+        <label for="start">Start</label>
+    </div>
+    <div data-container-for="start" class="k-edit-field" style="padding-left:10px;">
+        <input type="text"
+               data-role="datetimepicker"
+               data-interval="15"
+               data-type="date"
+               data-bind="value:start,invisible:isAllDay"
+               name="start" style="width:60%"/>
+        <input type="text" data-type="date" data-role="datepicker" data-bind="value:start,visible:isAllDay" name="start" />
+        <span data-bind="text: startTimezone"></span>
+        <span data-for="start" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label"><label for="Duration">Duration</label></div>
+    <div data-container-for="Duration" class="k-edit-field" style="padding-left:10px;">
+        <!--<input type="text" class="k-input k-textbox" name="Duration"  required="required" data-bind="value:bookDuration" style="width:60%;" -->
+        <input id="bookDurationId" data-role="numerictextbox"
+                   name="Duration"
+                   data-format="n0"
+                   data-min="0"
+                   data-max="100"
+                   data-step="5"
+                   data-bind="value: bookDuration,
+                              events: { change: onChange }"
+                   required="required"
+                   style="width: 60%">
+    <span data-for="Duration" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label"><label for="Card">Card</label></div>
+    <div data-container-for="Card" class="k-edit-field">
+        <input id="medicalCard" name="Card" data-role="dropdownlist"
+                   data-auto-bind="true"
                    data-value-primitive="true"
                    data-text-field="cardDesc"
                    data-value-field="id"
-                   data-bind="value: selectedProduct,
+                   data-bind="value: medicalCardId,
                               source: products,
                               visible: isVisible,
                               enabled: isEnabled,
@@ -181,21 +193,27 @@
                                 close: onClose
                               }"
                     required="required"
-                   style="width: 60%;padding-top:0px;"
-            />
-        </label>
-        <span class='k-invalid-msg' style="display: none;" data-for='Card'></span>
-      </li>
-      
-
-    </ul>
-
+                   style="width: 60%;padding-top:5px;"
+            >
+         <span data-for="Card" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label"><label for="arrival">Arrival</label></div>
+    <div data-container-for="arrival" class="k-edit-field">
+        <input type="checkbox"   id="arrival"   class="k-checkbox"  data-bind="checked:arrival">
+        <label class="k-checkbox-label" for="arrival" style="margin-top:5px;" >&nbsp;</label>
+        
+    
+    </div>
     </script>
     <script id="customEditorTemplate" type="text/x-kendo-template">
     <div class="k-edit-label"><label for="title">Title</label></div>
     <div data-container-for="title" class="k-edit-field">
         <input type="text" class="k-input k-textbox" name="title" required="required" data-bind="value:title">
-      </div>
+    </div>
+    <div class="k-edit-label"><label for="Tel">Tel</label></div>
+    <div data-container-for="Tel" class="k-edit-field">
+        <input type="text" class="k-input k-textbox" name="Tel" required="required" data-bind="value:patientTel">
+    </div>
     <div class="k-edit-label">
         <label for="start">Start</label>
       </div>

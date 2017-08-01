@@ -776,7 +776,9 @@ Fields
   text-shadow: 0 -1px 0 rgba(0,0,0,0.2), 0 1px 0 #fff;
 }
 
-
+.k-invalid-msg{
+    width: 100% !important;
+}
 
 
 /* END_CUSTOM_CODE_kendoUiMobileApp */

@@ -25,7 +25,7 @@
                 transition: 'slide',
                 layout: "mobile-tabstrip",
                 skin: 'nova',
-                initial: '#login-view'
+                initial: '#login-view'              
             });
             //kendo.bind($('.navigation-link-text'), app.navigation.viewModel);
         });
@@ -654,6 +654,8 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
                     });
     }
 var serviceRoot = "http://192.168.88.14:8400/BookingSystem"
+var readDate=new Date("2017/7/27");
+var readView = "day";
 var scheduleDataSource=new kendo.data.SchedulerDataSource({
                              batch:true,
 
@@ -691,12 +693,13 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
                                        //  return {models: kendo.stringify(options.models)};
                                      }
                                      else if(operation==="read"){
-                                       var scheduler=$("#testScheduler").data("kendoScheduler");
-
-                                       var result = {
+                                        
+                                       
+    	                                if(typeof scheduler !=="undefined" ){
+                                            var result = {
                                              //convert iso8601 format
-                                              start:"2017-07-26T01:00:00.000"+"Z",
-                                              view: "day",
+                                              start:moment(readDate).format("YYYY-MM-DDTHH:mm:ss.sss")+"Z",
+                                              view: readView,
                                               clinicId: 1
                                         };
                                         var models=[result];
@@ -708,69 +711,32 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
                                        else {
                                          return JSON.stringify([]);
                                        }
+                                        }
+                                       
                                      }
 
-                                 }
-
-                             },
-
-                             schema: {
-                                 model: {
-                                     id: "taskId",
-                                     fields: {
-                                         taskId: { from: "taskId", type: "number" },
-                                         bookId: { from: "bookId", type: "number" },
-                                         title: { from: "title", defaultValue: "", validation: { required: true } },
-                                         start: { type: "date", from: "start" , validation: { required: true }},
-                                         end: { type: "date", from: "end" , validation: { required: true }},
-                                         description: {from: "description" },
-                                         itemId:{from:"itemId",type:"number", validation: { required: true }},
-                                         itemDesc:{from:"itemDesc"},
-                                         clinicId: { from: "clinicId", type:"number" , validation: { required: true }},
-                                         isAllDay: { type: "boolean", from: "isAllDay" },
-                                         bookStatus:{from:"bookStatus"},
-                                         clientIp:{from:"clientIp"},
-                                         md5Password:{from:"md5Password"},
-                                         itemCatCode:{from:"itemCatCode"},
-                                         lastUpdateUser:{from:"lastUpdateUser"},
-                                         serviceItem1:{from:"serviceItem1"},
-                                         serviceItem2:{from:"serviceItem2"},
-                                         serviceItem3:{from:"serviceItem3"},
-                                         serviceItem4:{from:"serviceItem4"},
-                                         medicalCardId:{from:"medicalCardId", validation: { required: true }},
-                                         serviceItems:{from:"serviceItems"},
-                                         serviceItemDesc1:{from:"serviceItemDesc1"},
-                                         serviceItemDesc2:{from:"serviceItemDesc2"},
-                                         serviceItemDesc3:{from:"serviceItemDesc3"},
-                                         serviceItemDesc4:{from:"serviceItemDesc4"},
-                                         serviceItemDesc5:{from:"serviceItemDesc5"},
-                                         serviceRemark:{from:"serviceRemark"},
-                                         bookDuration:{type:"number",from:"bookDuration"},
-                                         cancelFlag:{type:"boolean",from:"cancelFlag"},
-                                         cancelReason:{from:"cancelReason"},
-                                         cancelUser:{from:"cancelUser"},
-                                         cancelTime:{type:"date",from:"cancelTime"},
-                                         callFlag:{type:"boolean",from:"callFlag"},
-                                         callByRn:{from:"callByRn"},
-                                         callTime:{type:"date",from:"callTime"},
-                                         commonRemark:{from:"commonRemark"},
-                                         rnRemark:{from:"rnRemark"},
-                                         pCMsgBak:{from:"pCMsgBak"},
-                                         pCOptionField:{from:"pCOptionField"},
-                                         receptionistDone:{type:"boolean",from:"receptionistDone"},
-                                         tagColor:{from:"tagColor"}
-
-
-                                     }
                                  }
                              }
                          });
     function initTestScheduler() {
+        var cardDS = new kendo.data.DataSource({
+                        transport: {
+                                read: {
+                                    url:"http://192.168.88.14:8400/BookingSystem/medicalCard/listForSelect",
+                                    dataType: "json",
+                                    type: "POST",
+                                    contentType: "application/json"
+                                }
+                        }
+                    });
+        
         $("#testScheduler").kendoScheduler({
-            date: new Date("2017/7/26"),
+            date: new Date("2017/7/27"),
             //startTime: new Date("2013/6/26 07:00 AM"),
             height: 'auto',
             allDaySlot: false,
+            majorTick:30,
+            minorTickCount :2,
             views: [
                 { type: "day", selected: true },
                 { type: "week", selectedDateFormat: "{0:ddd,MMM dd,yyyy} - {1:ddd,MMM dd,yyyy}" },
@@ -782,8 +748,9 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
                                  //confirmation: $scope.BookDeleteItem,
                                  //create: $scope.editable,
                                  //destroy: false,
-                                 move: true,
-                                 resize: true,
+                                 //move: true,
+                                 //resize: true
+                                 mode:"popup",
                                  template: kendo.template($("#patientEditorTemplate").html(), {useWithBlock:false})
                                },
             mobile: "phone",
@@ -804,41 +771,53 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
                     dataValueField: "id",
                     height:200
                 });*/
+                //console.log("edit",e.event);
+                kendo.unbind($("#medicalCard"));
                 var viewModel = kendo.observable({
-        selectedProduct: null,
-        isPrimitive: false,
-        isVisible: true,
-        isEnabled: true,
-        primitiveChanged: function() {
-            this.set("selectedProduct", null);
-        },
-        displaySelectedProduct: function() {
-            var selectedProduct = this.get("selectedProduct");
-            return kendo.stringify(selectedProduct, null, 4);
-        },
-        onOpen: function() {
-            console.log("event :: open");
-        },
-        onChange: function() {
-            console.log("event :: change ( test )");
-        },
-        onClose: function() {
-            console.log("event :: close");
-        },
-        products: new kendo.data.DataSource({
-            transport: {
-                       read: {
-                           url:"http://192.168.88.14:8400/BookingSystem/medicalCard/listForSelect",
-                           dataType: "json",
-                           type: "POST",
-                           contentType: "application/json"
-                       }
-            }
-        })
-    });
-    kendo.bind($("#medicalCardId"), viewModel);
+                    medicalCardId: e.event.medicalCardId,
+                    isPrimitive: false,
+                    isVisible: true,
+                    isEnabled: true,
+                                      
+                    onOpen: function() {
+                        //console.log("event :: open");
+                    },
+                    onChange: function() {
+                        //this.set("medicalCardId", null);
+                        e.event.set("medicalCardId", this.get("medicalCardId"));
+                        //console.log("event :: change ( test )"+this.get("medicalCardId"));
+                    },
+                    onClose: function() {
+                        //console.log("event :: close");
+                    },
+                    products: cardDS
+                });
+                kendo.bind($("#medicalCard"), viewModel);
+                viewModel.set("medicalCardId", e.event.medicalCardId);
+                
+                var durationModel = kendo.observable({
+                    bookDuration: 5,                  
+                    onChange: function() {
+                        e.event.set("bookDuration", this.get("bookDuration"));
+                    }
+                });
+                kendo.bind($("#bookDurationId"), durationModel);
+                durationModel.set("bookDuration",e.event.bookDuration);
+                
             },
-            
+            save:function(e){
+                e.event.set("title",e.event.lastName);
+                //e.event.set("medicalCardId",$("#medicalCard").val());
+            },  
+            cancel:function(e){
+                //console.log("cancel:",e.event);
+                scheduleDataSource.read();
+            },
+            navigate:function(e){
+                readDate=e.date;
+                readView=e.view;
+                scheduleDataSource.read();
+            },
             resources: [
             {
                 field: "itemId",
@@ -849,7 +828,7 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
                 ],
                 title: "Item"
             },
-            {
+            /*{
                 field: "medicalCardId",
                 name:"card",
                 dataSource: new kendo.data.DataSource({
@@ -871,7 +850,7 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
                      }
                    }) ,
                 title: "card"
-            },
+            },*/
             ]
         });
     }
