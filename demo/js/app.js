@@ -319,7 +319,21 @@ var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType
             ]
         });
     }
-
+     app.checkSimulator=  function _checkSimulator() {
+            if (window.navigator.simulator === true) {
+                alert('This plugin is not available in the simulator.');
+                return true;
+            } else if (window.screen === undefined) {
+                alert('Plugin not found. Maybe you are running in AppBuilder Companion app which currently does not support this plugin.');
+                return true;
+            } else {
+                return false;
+            }
+        };
+    window.app.initCanvas = function _initCanvas(){
+        if(!app.checkSimulator)
+            window.screen.lockOrientation('landscape');
+    }
 	window.app.initGrid = function _initGrid() {
         var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
         var dataSource = new kendo.data.DataSource({
@@ -855,5 +869,24 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
         });
     }
     
-        
+    
+   var canvas = document.getElementById('sketcher');
+		var atrament = atrament(canvas, window.innerWidth, window.innerHeight);
 
+		var clearButton = document.getElementById('clear');
+		canvas.addEventListener('dirty', function(e) {
+			clearButton.style.display = atrament.dirty ? 'inline-block' : 'none';
+		});     
+    function uploadImg(){
+        $.ajax({
+                   url: 'http://192.168.88.14:8400/BookingSystem/mobile/uploadImg',
+                   type: 'post',
+                   data: atrament.toImage(),
+                   
+                   contentType: "text/html",
+                   success: function fbs_click1() {
+                      console.log('success..........');
+                   }
+               });
+    }
+    

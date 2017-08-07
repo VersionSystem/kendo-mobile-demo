@@ -2,6 +2,7 @@
 <html>
 <head>
     <title></title>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height" />
     <link rel="stylesheet" href="http://cdn.kendostatic.com/2015.3.930/styles/kendo.mobile.android.light.min.css" />
     <link rel="stylesheet" href="kendo/styles/kendo.common.min.css" />
     <link rel="stylesheet" href="kendo/styles/kendo.nova.min.css" />
@@ -9,6 +10,7 @@
     <link href="styles/main.css" rel="stylesheet" />
 
     <script src="cordova.js"></script>
+    <script src="js/atrament.min.js"></script>
     <script src="js/moment.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
     <script src="kendo/js/kendo.all.min.js"></script>
@@ -114,6 +116,7 @@
     <ul id="patient-detailview" data-role="listview">
         <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#scheduler-view" class="km-listview-link"> Scheduler </a></li>
         <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#grid-view" class="km-listview-link"> Label Print </a></li>
+        <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#canvas-view" class="km-listview-link">Free Drawing </a></li>
     </ul>
     
 </div>
@@ -136,19 +139,45 @@
     <div id="grid" ></div>
     
 </div>
+<div id="canvas-view" data-role="view" data-show="app.initCanvas" data-stretch="true" data-title="Drawing">
+    
+    <form class="canvasform" style="display:none">
+			<button id="clear" onclick="event.preventDefault(); atrament.clear();">clear</button><br>
+			<label>Thickness</label><br>
+			<input type="range" min="1" max="40" oninput="atrament.weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off"/><br>
+			<label>Smoothing</label><br>
+			<input type="checkbox" onchange="atrament.smoothing = event.target.checked;" checked autocomplete="off"><br>
+			<label>Adaptive stroke</label><br>
+			<input type="checkbox" onchange="atrament.adaptiveStroke = event.target.checked;" checked autocomplete="off"><br>
+			<label>Mode</label>
+			<select onchange="atrament.mode = event.target.value;">
+				<option value="draw" default>Draw</option>
+				<option value="fill" default>Fill</option>
+				<option value="erase" default>Erase</option>
+			</select><br>
+			<label>Colour</label>
+			<input type="color" onchange="atrament.color = event.target.value;" value="#000000" autocomplete="off"><br>
+			<label>Opacity</label><br>
+			<input type="range" min="0" max="1" onchange="atrament.opacity = parseFloat(event.target.value);" value="1" step="0.05" autocomplete="off"><br>
+			
+		</form>
+        <input  class="canvasform" type="button" value="export" onclick="window.open(atrament.toImage());uploadImg()"/>
+		<canvas id="sketcher"></canvas>
+    
+</div>
 <div id="test-scheduler-view" data-role="view" data-init="initTestScheduler" data-stretch="true" data-title="Scheduler">
     
     <div id="testScheduler" ></div>
     <script id="patientEditorTemplate" type="text/x-kendo-template">
     
     <div class="k-edit-label" >
-        <label for="name">Name</label>
+        <label for="name" class="km-required">Name</label>
     </div>
     <div data-container-for="name" class="k-edit-field" style="padding-left:10px;">
         <input type="text" class="k-input k-textbox" name="Name"  required="required" data-bind="value:lastName" style="width:60%" >
     </div>
     <div class="k-edit-label km-required" >
-        <label for="start">Start</label>
+        <label for="start" class="km-required">Start</label>
     </div>
     <div data-container-for="start" class="k-edit-field" style="padding-left:10px;">
         <input type="text"
@@ -161,7 +190,7 @@
         <span data-bind="text: startTimezone"></span>
         <span data-for="start" class="k-invalid-msg" style="display: none;"></span>
     </div>
-    <div class="k-edit-label"><label for="Duration">Duration</label></div>
+    <div class="k-edit-label"><label for="Duration" class="km-required">Duration</label></div>
     <div data-container-for="Duration" class="k-edit-field" style="padding-left:10px;">
         <!--<input type="text" class="k-input k-textbox" name="Duration"  required="required" data-bind="value:bookDuration" style="width:60%;" -->
         <input id="bookDurationId" data-role="numerictextbox"
@@ -176,8 +205,8 @@
                    style="width: 60%">
     <span data-for="Duration" class="k-invalid-msg" style="display: none;"></span>
     </div>
-    <div class="k-edit-label"><label for="Card">Card</label></div>
-    <div data-container-for="Card" class="k-edit-field">
+    <div class="k-edit-label"><label for="Card" class="km-required">Card</label></div>
+    <div data-container-for="Card" class=" k-edit-field">
         <input id="medicalCard" name="Card" data-role="dropdownlist"
                    data-auto-bind="true"
                    data-value-primitive="true"
