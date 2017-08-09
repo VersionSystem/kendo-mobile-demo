@@ -779,6 +779,9 @@ Fields
 .k-invalid-msg{
     width: 100% !important;
 }
+.k-nonwork-hour {
+  background:  #c0c0c0 !important;
+}
 canvas {
 				width: 100vw;
 				height: 100vh;

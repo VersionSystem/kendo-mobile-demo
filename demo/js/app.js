@@ -294,7 +294,7 @@ var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType
             },
             group: {
                     resources: ["Rooms"]
-                    //orientation: $scope.schedulerOptions_groupOrientation
+                    
             },
             resources: [
             {
@@ -670,7 +670,40 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
 var serviceRoot = "http://192.168.88.14:8400/BookingSystem"
 var readDate=new Date("2017/7/27");
 var readView = "day";
-var scheduleDataSource=new kendo.data.SchedulerDataSource({
+var scheduleDataSource;
+    var centered = $("#centeredNotification").kendoNotification({
+                        stacking: "down",
+                        show: onShow,
+                        button: true
+                    }).data("kendoNotification");
+    var currentDate;
+    var resetBackground=true;
+    var schedulerNoneWorkHours;
+    var resourceDS;
+    var workhoursArray;
+    function initTestScheduler() {
+        var cardDS = new kendo.data.DataSource({
+                        transport: {
+                                read: {
+                                    url:"http://192.168.88.14:8400/BookingSystem/medicalCard/listForSelect",
+                                    dataType: "json",
+                                    type: "POST",
+                                    contentType: "application/json"
+                                }
+                        }
+        });
+        
+        
+        
+        $.ajax({
+            url: 'http://192.168.88.14:8400/BookingSystem/booking/schedulerParas/1',
+            type: 'post',                  
+            contentType: "application/json",
+            success: function fbs_click1(data) {  
+            resourceDS =  new kendo.data.DataSource({data: data.resourceDs});  
+            currentDate = new Date(data.date);
+            readDate = currentDate;
+            scheduleDataSource=new kendo.data.SchedulerDataSource({
                              batch:true,
 
                              transport: {
@@ -731,145 +764,323 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
 
                                  }
                              }
-                         });
-    function initTestScheduler() {
-        var cardDS = new kendo.data.DataSource({
-                        transport: {
-                                read: {
-                                    url:"http://192.168.88.14:8400/BookingSystem/medicalCard/listForSelect",
-                                    dataType: "json",
-                                    type: "POST",
-                                    contentType: "application/json"
+                         });           
+            $("#testScheduler").kendoScheduler({
+                date: new Date(data.date),
+                startTime: new Date(data.startTime),
+                endTime: new Date(data.endTime),
+                height:"auto",
+                allDaySlot:data.allDaySlot,
+                majorTick:data.majorTick,
+                minorTickCount :data.minorTickCount,
+                mobile: "phone",
+                footer:data.footer,
+                //views: $scope.schedulerOptions_allDaySlotviews,
+                eventTemplate: $("#event-template").html(),
+                timezone:"Etc/UTC",
+                views: [
+                    { type: "day", selected: true },
+                    { type: "week", selectedDateFormat: "{0:ddd,MMM dd,yyyy} - {1:ddd,MMM dd,yyyy}" },
+                    "month",
+                    { type: "agenda", selectedDateFormat: "{0:ddd, M/dd/yyyy} - {1:ddd, M/dd/yyyy}" },
+                    "timeline"
+                ],
+                editable: {
+                                    //confirmation: $scope.BookDeleteItem,
+                                    //create: $scope.editable,
+                                    //destroy: false,
+                                    //move: true,
+                                    //resize: true
+                                    mode:"popup",
+                                    template: kendo.template($("#patientEditorTemplate").html(), {useWithBlock:false})
+                },                     
+                dataSource: scheduleDataSource,
+                add:function(e){
+                    //kendo.ui.progress($("#testScheduler"), true);
+                    console.log(e.event.start);
+                    if (!checkAvailability(e.event.start, e.event.end, e.event)) {
+                        //kendo.ui.progress($("#testScheduler"), false);
+                        e.preventDefault();
+                    }
+                    
+                },
+                edit:function(e){    
+                    e.preventDefault();   
+                    if(e.event.isNew()){
+                        e.event.set('clinicId', 1);
+                        e.event.set('bookId', 0);
+                        e.event.set('itemId',1);
+                        e.event.set('title','1');                                         
+                            var action="/booking/create2";
+                            //e.event.set('lastUpdateUser',$scope.currentEditUser);
+                            //console.log("e.event:",e.event);
+                            var models=[e.event];
+                            $.ajax({                                                            
+                                url: serviceRoot+action,
+                                type: 'post',
+                                contentType: "application/json",
+                                data:JSON.stringify(models),
+                                success: function fbs_click1() {                                   
+                                    scheduleDataSource.read();
                                 }
+                            });
+                    } else{
+                        /*kendo.unbind($("#medicalCard"));
+                        var viewModel = kendo.observable({
+                            medicalCardId: e.event.medicalCardId,
+                            isPrimitive: false,
+                            isVisible: true,
+                            isEnabled: true,                                           
+                            onOpen: function() {
+                                //console.log("event :: open");
+                            },
+                            onChange: function() {
+                                //this.set("medicalCardId", null);
+                                e.event.set("medicalCardId", this.get("medicalCardId"));
+                                //console.log("event :: change ( test )"+this.get("medicalCardId"));
+                            },
+                            onClose: function() {
+                                //console.log("event :: close");
+                            },
+                            products: cardDS
+                        });
+                        kendo.bind($("#medicalCard"), viewModel);
+                        viewModel.set("medicalCardId", e.event.medicalCardId);
+                        
+                        var durationModel = kendo.observable({
+                            bookDuration: 5,                  
+                            onChange: function() {
+                                e.event.set("bookDuration", this.get("bookDuration"));
+                            }
+                        });
+                        kendo.bind($("#bookDurationId"), durationModel);
+                        durationModel.set("bookDuration",e.event.bookDuration);*/
+                    }         
+                        
+                        
+                    },
+                    save:function(e){
+                         e.preventDefault();
+                        e.event.set("title",e.event.lastName);
+                        //e.event.set("medicalCardId",$("#medicalCard").val());
+                        if(e.event.isNew()){
+                            var action="/booking/create";
+                            //e.event.set('lastUpdateUser',$scope.currentEditUser);
+                            var models=[e.event];
+                            $.ajax({                                                            
+                                url: serviceRoot+action,
+                                type: 'post',
+                                data:JSON.stringify(models),
+                                success: function fbs_click1() {
+                                    console.log('success..........');
+                                    scheduleDataSource.read();
+                                }
+                            });
                         }
-                    });
-        
-        $("#testScheduler").kendoScheduler({
-            date: new Date("2017/7/27"),
-            //startTime: new Date("2013/6/26 07:00 AM"),
-            height: 'auto',
-            allDaySlot: false,
-            majorTick:30,
-            minorTickCount :2,
-            views: [
-                { type: "day", selected: true },
-                { type: "week", selectedDateFormat: "{0:ddd,MMM dd,yyyy} - {1:ddd,MMM dd,yyyy}" },
-                "month",
-                { type: "agenda", selectedDateFormat: "{0:ddd, M/dd/yyyy} - {1:ddd, M/dd/yyyy}" },
-                "timeline"
-            ],
-            editable: {
-                                 //confirmation: $scope.BookDeleteItem,
-                                 //create: $scope.editable,
-                                 //destroy: false,
-                                 //move: true,
-                                 //resize: true
-                                 mode:"popup",
-                                 template: kendo.template($("#patientEditorTemplate").html(), {useWithBlock:false})
-                               },
-            mobile: "phone",
-            timezone: "Etc/UTC",
-            dataSource: scheduleDataSource,
-            edit:function(e){
-                /*$("#medicalCardId").kendoDropDownList({
-                    dataSource: new kendo.data.DataSource({
-                     transport: {
-                       read: {
-                           url:"http://192.168.88.14:8400/BookingSystem/medicalCard/listForSelect",
-                           dataType: "json",
-                           type: "POST",
-                           contentType: "application/json"
-                       }
-                    }}),
-                    dataTextField: "cardDesc",
-                    dataValueField: "id",
-                    height:200
-                });*/
-                //console.log("edit",e.event);
-                kendo.unbind($("#medicalCard"));
-                var viewModel = kendo.observable({
-                    medicalCardId: e.event.medicalCardId,
-                    isPrimitive: false,
-                    isVisible: true,
-                    isEnabled: true,
-                                      
-                    onOpen: function() {
-                        //console.log("event :: open");
+                    },  
+                    cancel:function(e){
+                        //console.log("cancel:",e.event);
+                        scheduleDataSource.read();
                     },
-                    onChange: function() {
-                        //this.set("medicalCardId", null);
-                        e.event.set("medicalCardId", this.get("medicalCardId"));
-                        //console.log("event :: change ( test )"+this.get("medicalCardId"));
+                    navigate:function(e){
+                        if(e.view=="day" || e.view=="week")
+                            resetBackground=true;
+                        readDate=e.date;
+                        readView=e.view;
+                        scheduleDataSource.read();
                     },
-                    onClose: function() {
-                        //console.log("event :: close");
+                    /*group: {
+                        resources: ["Rooms"],
+                        orientation: data.groupOrientation
                     },
-                    products: cardDS
-                });
-                kendo.bind($("#medicalCard"), viewModel);
-                viewModel.set("medicalCardId", e.event.medicalCardId);
-                
-                var durationModel = kendo.observable({
-                    bookDuration: 5,                  
-                    onChange: function() {
-                        e.event.set("bookDuration", this.get("bookDuration"));
+                    resources: [
+                    {
+                        field: "itemId",
+                        name:"Rooms",
+                        dataSource: new kendo.data.DataSource({data: data.resourceDs}),
+                        title: "Item"
+                    }          
+                    ],*/
+                    dataBound: function(e) {
+
+                      
+                               if(resetBackground){
+                                   var self=this;
+
+                                   workhoursArray=[];
+                                   $.get(serviceRoot+"/booking/schedulerNoneWorkHours/"+this.view().name+"/"+this.date()+"/1",
+                                     function(result){
+                                     schedulerNoneWorkHours=result;
+                                     var container = self.view().element;
+                                     var cells = container.find("td[role=gridcell]");
+                                     
+                                     for (var i = 0; i < cells.length; i++) {
+                                       var cell = $(cells[i]);
+                                       
+                                       if(!cell.hasClass("k-nonwork-hour"))
+                                         cell.addClass("k-nonwork-hour");
+                                       if(cell.hasClass("k-today"))
+                                           cell.removeClass("k-today");
+                                     }
+                                     //var now=new Date();
+                                     for (var i = 0; i < cells.length; i++) {
+                                       var cell = $(cells[i]);
+
+                                       if(self!=null){
+                                         var slot = self.slotByElement(cell);
+                                         if(slot!=null){
+                                         var startHour = slot.startDate.getHours();
+                                         var endHour = slot.endDate.getHours();
+                                         //cell.removeClass("k-nonwork-hour");
+                                         var dslength=resourceDS.options.data.length;
+                                         
+                                         /*var groupItemIndex=0;
+
+                                         if(self.view().name=="week"){
+                                           for(var k=0;k<dslength;k++){
+                                             if(cell.context.cellIndex-k*7<=0){
+                                               groupItemIndex=k;
+                                               break;
+                                             }
+                                           }
+                                         }
+                                         else {
+                                           groupItemIndex=cell.context.cellIndex
+                                         }
+                                         var groupItemId=(resourceDS.options.data[groupItemIndex].value);*/
+                                         //console.log("groupItemId",groupItemId);
+                                         for(var j=0;j<schedulerNoneWorkHours.length;j++){
+                                           var tempObject=schedulerNoneWorkHours[j];
+                                           console.log("tempObejct",tempObject);
+                                           var hstartTime=new Date(tempObject.startTime);// kendo.timezone.convert(new Date(tempObject.startTime), now.getTimezoneOffset(), "Etc/UTC");
+                                           var hendTime=new Date(tempObject.endTime);//kendo.timezone.convert(new Date(tempObject.endTime), now.getTimezoneOffset(), "Etc/UTC");
+
+                                           //if(groupItemId==tempObject.itemId && slot.endDate.getYear()==hstartTime.getYear() && slot.endDate.getMonth()==hstartTime.getMonth()&& slot.endDate.getDate()==hstartTime.getDate()){
+                                           if(slot.endDate.getYear()==hstartTime.getYear() && slot.endDate.getMonth()==hstartTime.getMonth()&& slot.endDate.getDate()==hstartTime.getDate()){
+    
+                                               if(tempObject.isHoliday){
+                                                 //cell.css("background", "red");
+                                                 if(!cell.hasClass("k-nonwork-hour"))
+                                                   cell.addClass("k-nonwork-hour");
+                                                 break;
+                                               }
+                                               else{
+                                                 if(slot.startDate.getTime()>=hstartTime.getTime() && slot.endDate.getTime()<=hendTime.getTime()){
+
+                                                  if(slot.startDate.getMinutes()%tempObject.sectionTime===0){
+                                                    if(cell.hasClass("k-nonwork-hour"))
+                                                      cell.removeClass("k-nonwork-hour");
+                                                      //cell.css("background", "lightblue");
+                                                      var workhourObj=new Object();
+                                                      workhourObj.startTime=slot.startDate;
+                                                      workhourObj.endTime=slot.endDate;
+                                                      workhourObj.itemId=tempObject.itemId;
+                                                      workhourObj.clinicId=tempObject.clinicId;
+                                                      workhoursArray.push(workhourObj);
+
+                                                  }
+                                                   //cell.css("background", "#A19D99");
+
+                                                   break;
+                                                 }
+
+                                               }
+                                               
+                                             }
+
+
+                                           }
+                                         }//slot !=null
+
+                                           }
+                                       }
+
+                                       resetBackground=false;
+
+                                     });
+                                   }
+                                   
                     }
                 });
-                kendo.bind($("#bookDurationId"), durationModel);
-                durationModel.set("bookDuration",e.event.bookDuration);
-                
-            },
-            save:function(e){
-                e.event.set("title",e.event.lastName);
-                //e.event.set("medicalCardId",$("#medicalCard").val());
-            },  
-            cancel:function(e){
-                //console.log("cancel:",e.event);
-                scheduleDataSource.read();
-            },
-            navigate:function(e){
-                readDate=e.date;
-                readView=e.view;
-                scheduleDataSource.read();
-            },
-            resources: [
-            {
-                field: "itemId",
-                name:"Rooms",
-                dataSource: [
-                    { text: "Meeting Room 101", value: 1, color: "#6eb3fa" },                   
-                    { text: "Meeting Room 201", value: 2, color: "#f58a8a" }
-                ],
-                title: "Item"
-            },
-            /*{
-                field: "medicalCardId",
-                name:"card",
-                dataSource: new kendo.data.DataSource({
-                     transport: {
-                       read: {
-                           url:"http://192.168.88.14:8400/BookingSystem/medicalCard/listForSelect",
-                           dataType: "json",
-                           type: "POST",
-                           contentType: "application/json"
-                       }
-                     },schema: {
-                                 model: {
-                                     id: "id",
-                                     fields: {
-                                         value: { from: "id", type: "number" },
-                                         text:{from:"cardDesc"}
-                                     }
-                                 }
-                     }
-                   }) ,
-                title: "card"
-            },*/
-            ]
+            }
         });
+        
     }
-    
-    
+    function onShow(e) {
+                    if (e.sender.getNotifications().length == 1) {
+                        var element = e.element.parent(),
+                            eWidth = element.width(),
+                            eHeight = element.height(),
+                            wWidth = $(window).width(),
+                            wHeight = $(window).height(),
+                            newTop, newLeft;
+                        
+                        newLeft = Math.floor(wWidth / 2 - eWidth / 2);
+                        newTop = Math.floor(wHeight / 2 - eHeight / 2);
+
+                        e.element.parent().css({top: newTop, left: newLeft,'width':'100%'});
+                    }
+                }
+    function checkAvailability(start, end, event, resources) {
+
+
+                    /* if (eventExpiredOccupied(start, end, event, resources)) {
+                         setTimeout(function() {
+                           centered.show(kendo.toString(start, 'HH:MM:ss.') + kendo.toString(start.getMilliseconds(), "000"));
+                           //toastr.error($scope.BookExpired,"",{positionClass: "toast-top-center",preventDuplicates:true,closeButton:true,escapeHtml:true});
+
+                         }, 0);
+
+                         return false;
+                     }*/
+                     
+                     if (nonworkhoursOccupied(start, end, event, resources)) {
+                         setTimeout(function() {
+                           centered.show("Book is not allowed in this area","error");
+                         }, 0);
+
+                         return false;
+                     }
+
+                     return true;
+        }
+    function nonworkhoursOccupied(start, end, event, resources) {
+
+                     if(workhoursArray.length>0 && typeof event!=="undefined"){
+                       var isWorkhours=true;
+                        var slotStart=moment(start);
+                         var slotWorkhours=false;
+                         for(var i=0;i<workhoursArray.length;i++){
+                           var tempTime=workhoursArray[i];
+                           /*var endItemId=event.itemId;
+                           if(typeof resources!=="undefined")
+                             endItemId=resources.itemId;
+                           if(tempTime.itemId===endItemId){*/
+                             console.log(slotStart,tempTime.startTime);
+                             if(slotStart.isSame(moment(tempTime.startTime)) ){//|| slotStart.isBetween(moment(tempTime.startTime),moment(tempTime.endTime))
+                               slotWorkhours=true;
+                             }
+                           //}
+                         }
+                         if(!slotWorkhours){
+                           isWorkhours=false;
+                           
+                         }                     
+                       if(!isWorkhours){
+                         return true;
+                       }
+                     }
+                     return false;
+                   }
+        
+
+        function eventExpiredOccupied(start, end, event, resources) {
+                     if(start.getTime()<currentDate.getTime()){
+                       return true;
+                     }
+                     return false;
+        }
+
    var canvas = document.getElementById('sketcher');
 		var atrament = atrament(canvas, window.innerWidth, window.innerHeight);
 
@@ -881,12 +1092,11 @@ var scheduleDataSource=new kendo.data.SchedulerDataSource({
         $.ajax({
                    url: 'http://192.168.88.14:8400/BookingSystem/mobile/uploadImg',
                    type: 'post',
-                   data: atrament.toImage(),
-                   
+                   data: atrament.toImage(),               
                    contentType: "text/html",
                    success: function fbs_click1() {
                       console.log('success..........');
                    }
-               });
+        });
     }
     

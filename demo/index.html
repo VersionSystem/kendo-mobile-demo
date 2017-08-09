@@ -18,7 +18,7 @@
 
 </head>
 <body id="kendoUiMobileApp">
-
+<span id="centeredNotification" style="display:none;width:100%"></span>
 <div id="login-view" data-model="app.loginModel" data-role="view" class="form-view">
     <div class="panel">
         <div  class="info-icon"></div>
@@ -168,6 +168,11 @@
 <div id="test-scheduler-view" data-role="view" data-init="initTestScheduler" data-stretch="true" data-title="Scheduler">
     
     <div id="testScheduler" ></div>
+    <script id="event-template" type="text/x-kendo-template">
+
+        <div style="font-size:12px;">#=title #</div>
+
+    </script>
     <script id="patientEditorTemplate" type="text/x-kendo-template">
     
     <div class="k-edit-label" >
