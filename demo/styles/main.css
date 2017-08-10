@@ -93,10 +93,9 @@
 
 #kendoUiMobileApp .info-icon {
     margin: 0 auto;
-    width: 3.3rem;
-    height: 3.3rem;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAABIklEQVRoge3YMU4CURDG8R+KqImGxNoTWNgYqSgtvYBn8EY2nkE7LTwItbGUwhgLFSxgLTS4i4w+SOafTDc73/vydva9HZIkSZIlooNrPM6IK2wUW10DehjXRC9ScC2ymMkOROQ0JtrAv5MGvjAKyinGLgZmN/AAO5GCrchiU9rY9313R7jH2x9oJslvieqBU5z5+Zowwh0ugjTD6OBF/RWiioNI8YhzYBtbc+TvBWh+kiexwt/1CAPPuMR7QK3i9NU3cT9SMHugNGmgNGmgNCtvYD2ozjHOcYLDmtxNHOEJD0H6C9HGUPPbaBXD6bPF6Zp/8VV0FxVf+R6IMLDInGdpZkS35n99biKEo/6JWyazoKaj81eTGdE4SD9JkiRJVpMPXjloDVm2S04AAAAASUVORK5CYII=');
-    background-repeat: no-repeat;
+    height: 3em;
+    background: url('../images/muchotravka.png') no-repeat center center fixed;   	
+	background-size: cover;
 }
 
 #kendoUiMobileApp .editableListItem > div,
@@ -754,13 +753,13 @@ Fields
         box-shadow: inset .1em .1em .2em 0 rgba(0,0,0,.2);
     }
 .panel {
-  background: #eceeee;
+  background:#F1E4E4;
   border: 1px solid #42464b;
-  border-radius: 6px;
-  margin: 20px auto 0;
-  width: 95%;
-  height:95%;
-  padding:5px;
+  border-radius:0px;
+  margin: 1px auto 0;
+  width: 100%;
+  height:100%;
+  padding:0px;
 }
 .panel h2 {
   background-image: linear-gradient(top, #f1f3f3, #d4dae0);

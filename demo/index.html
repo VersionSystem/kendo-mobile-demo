@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+    <head>
     <title></title>
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height" />
     <link rel="stylesheet" href="http://cdn.kendostatic.com/2015.3.930/styles/kendo.mobile.android.light.min.css" />
@@ -8,172 +8,141 @@
     <link rel="stylesheet" href="kendo/styles/kendo.nova.min.css" />
     <link rel="stylesheet" href="kendo/styles/kendo.mobile.all.min.css" />
     <link href="styles/main.css" rel="stylesheet" />
-
+    <style type="text/css"></style>
     <script src="cordova.js"></script>
     <script src="js/atrament.min.js"></script>
     <script src="js/moment.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
     <script src="kendo/js/kendo.all.min.js"></script>
-
-
-</head>
-<body id="kendoUiMobileApp">
+    </head>
+    <body id="kendoUiMobileApp">
 <span id="centeredNotification" style="display:none;width:100%"></span>
 <div id="login-view" data-model="app.loginModel" data-role="view" class="form-view">
-    <div class="panel">
-        <div  class="info-icon"></div>
-        <h2>Please Login</h2>
+      <div class="panel">
+    <div  class="info-icon"></div>
+    <h2 >Please Login</h2>
     <form>
-      <ul  data-role="listview" data-style="group">
-                <li>
-                    <label>
-
-                        Username:
-					<input type="text" id="userName" data-bind="value:userId" />
-
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        Password:
-					<input type="password" id="pwd" data-bind="value:password" />
-
-                    </label>
-                </li>
-
-            </ul>
-            <br/>
-            <div>
-              <a  data-animated="true" class="km-primary km-justified" data-role="button" data-bind="click:testlogin">Login</a>
-           </div>
-           <br/>
-
+          <ul  data-role="listview" data-style="group">
+        <li>
+              <label class="mylabel"> Username:
+            <input type="text" id="userName" data-bind="value:userId" />
+          </label>
+            </li>
+        <li>
+              <label> Password:
+            <input type="password" id="pwd" data-bind="value:password" />
+          </label>
+            </li>
+      </ul>
+          <br/>
+          <div> <a  data-animated="true" class="km-primary km-justified" data-role="button" data-bind="click:testlogin">Login</a> </div>
+          <br/>
         </form>
-        </div>
-</div>
+  </div>
+    </div>
 <div data-role="view" id="clinic-listview" data-title="Clinics List" data-init="listClinicsInit">
-    <header data-role="header" >
-        <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#/" data-role="backbutton">Back</a>
-            <span data-role="view-title"></span>
-            <!--<a data-align="right" data-icon="source-code" data-click="goToSourceCode" data-role="button" title="Show this demo source code"></a>-->
+      <header data-role="header" >
+    <div data-role="navbar"> <a  class="nav-button" data-align="left" href="#/" data-role="backbutton">Back</a> <span data-role="view-title"></span> 
+          <!--<a data-align="right" data-icon="source-code" data-click="goToSourceCode" data-role="button" title="Show this demo source code"></a>--> 
         </div>
-    </header>
-    
-    <ul id="clinic-list" ></ul>
-    
-    <script id="clinic-list-emplate" type="text/x-kendo-template">
+  </header>
+      <ul id="clinic-list" >
+  </ul>
+      <script id="clinic-list-emplate" type="text/x-kendo-template">
         <a class="km-listview-link"> #=clinicName# </a>
         <a href="\\#" data-role="button" data-icon="trash" class="delete km-primary"></a>
-    </script>
-</div>
-<div data-role="view" id="doctor-listview" data-init="listDoctorsInit" data-title="Doctors List">
-    <header data-role="header">
-        <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#clinic-listview" data-role="backbutton">Back</a>
-            <span data-role="view-title"></span>
-            
-        </div>
-    </header>
-    
-        <ul id="doctor-filterable-listview"></ul>
-    
-</div>
+    </script> 
+    </div>
+<div data-role="view" id="doctor-listview" data-init="listDoctorsInit" data-show="showDoctor" data-title="Doctors List">
+      <header data-role="header">
+    <div id="doctorBar" data-role="navbar"> <a  class="nav-button" data-align="left" href="#clinic-listview" data-role="backbutton">Back</a> <span data-role="view-title"></span> </div>
+  </header>
+      <ul id="doctor-filterable-listview">
+  </ul>
+    </div>
 <script type="text/x-kendo-tmpl" id="doctor-list-template">
         <!--<img src="../content/web/foods/#=id#.jpg" alt="#=doctorName# image" class="km-thumbnail"/>-->
         <a class="km-listview-link"> #=doctorName# </a>
 </script>
 <div data-role="view" id="patient-listview" data-init="listPatientsInit" data-title="Patients List">
-    <header data-role="header">
-        <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#doctor-listview" data-role="backbutton">Back</a>
-            <span data-role="view-title"></span>
-            
-        </div>
-    </header>
-    
-        <ul id="patient-filterable-listview" ></ul>
-  
-</div>
-
+      <header data-role="header">
+    <div data-role="navbar"> <a  class="nav-button" data-align="left" href="#doctor-listview" data-role="backbutton">Back</a> <span data-role="view-title"></span> </div>
+  </header>
+      <ul id="patient-filterable-listview" >
+  </ul>
+    </div>
 <script type="text/x-kendo-tmpl" id="patient-list-template">
         <!--<img src="../content/web/foods/#=ProductID#.jpg" alt="#=ProductName# image" class="km-thumbnail"/>-->
         <a class="km-listview-link"> #=ProductName# </a>
 </script>
-
 <div data-role="view" id="patient-detailview" data-init="showPatientsInit" data-title="Patients INFO.">
-    <header data-role="header">
-        <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#patient-listview" data-role="backbutton">Back</a>
-            <span data-role="view-title"></span>
-            
-        </div>
-    </header>
-    
-        <div id="products"></div>
-    
-   
-    <ul id="patient-detailview" data-role="listview">
-        <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#scheduler-view" class="km-listview-link"> Scheduler </a></li>
-        <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#grid-view" class="km-listview-link"> Label Print </a></li>
-        <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#canvas-view" class="km-listview-link">Free Drawing </a></li>
-    </ul>
-    
-</div>
-
+      <header data-role="header">
+    <div data-role="navbar"> <a  class="nav-button" data-align="left" href="#patient-listview" data-role="backbutton">Back</a> <span data-role="view-title"></span> </div>
+  </header>
+      <div id="products"></div>
+      <ul id="patient-detailview2" data-role="listview">
+    <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#scheduler-view" class="km-listview-link"> Scheduler </a></li>
+    <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#grid-view" class="km-listview-link"> Label Print </a></li>
+    <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#canvas-view" class="km-listview-link">Free Drawing </a></li>
+  </ul>
+    </div>
 <div id="scheduler-view" data-role="view" data-init="app.initScheduler" data-stretch="true" data-title="Scheduler">
-    <header data-role="header">
-        <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#patient-detailview" data-role="backbutton">Back</a>
-            <span data-role="view-title"></span>
-            
-        </div>
-    </header>
-    
-    <div id="scheduler" ></div>
-    
-</div>
-
+      <header data-role="header">
+    <div data-role="navbar"> <a  class="nav-button" data-align="left" href="#patient-detailview" data-role="backbutton">Back</a> <span data-role="view-title"></span> </div>
+  </header>
+      <div id="scheduler" ></div>
+    </div>
 <div id="grid-view" data-role="view" data-init="app.initGrid" data-stretch="true" data-title="Grid">
-    
-    <div id="grid" ></div>
-    
-</div>
+      <div id="grid" ></div>
+    </div>
 <div id="canvas-view" data-role="view" data-show="app.initCanvas" data-stretch="true" data-title="Drawing">
-    
-    <form class="canvasform" style="display:none">
-			<button id="clear" onclick="event.preventDefault(); atrament.clear();">clear</button><br>
-			<label>Thickness</label><br>
-			<input type="range" min="1" max="40" oninput="atrament.weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off"/><br>
-			<label>Smoothing</label><br>
-			<input type="checkbox" onchange="atrament.smoothing = event.target.checked;" checked autocomplete="off"><br>
-			<label>Adaptive stroke</label><br>
-			<input type="checkbox" onchange="atrament.adaptiveStroke = event.target.checked;" checked autocomplete="off"><br>
-			<label>Mode</label>
-			<select onchange="atrament.mode = event.target.value;">
-				<option value="draw" default>Draw</option>
-				<option value="fill" default>Fill</option>
-				<option value="erase" default>Erase</option>
-			</select><br>
-			<label>Colour</label>
-			<input type="color" onchange="atrament.color = event.target.value;" value="#000000" autocomplete="off"><br>
-			<label>Opacity</label><br>
-			<input type="range" min="0" max="1" onchange="atrament.opacity = parseFloat(event.target.value);" value="1" step="0.05" autocomplete="off"><br>
-			
-		</form>
-        <input  class="canvasform" type="button" value="export" onclick="window.open(atrament.toImage());uploadImg()"/>
-		<canvas id="sketcher"></canvas>
-    
-</div>
-<div id="test-scheduler-view" data-role="view" data-init="initTestScheduler" data-stretch="true" data-title="Scheduler">
-    
-    <div id="testScheduler" ></div>
-    <script id="event-template" type="text/x-kendo-template">
+      <form class="canvasform" style="display:none">
+    <button id="clear" onclick="event.preventDefault(); atrament.clear();">clear</button>
+    <br>
+    <label>Thickness</label>
+    <br>
+    <input type="range" min="1" max="40" oninput="atrament.weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off"/>
+    <br>
+    <label>Smoothing</label>
+    <br>
+    <input type="checkbox" onchange="atrament.smoothing = event.target.checked;" checked autocomplete="off">
+    <br>
+    <label>Adaptive stroke</label>
+    <br>
+    <input type="checkbox" onchange="atrament.adaptiveStroke = event.target.checked;" checked autocomplete="off">
+    <br>
+    <label>Mode</label>
+    <select onchange="atrament.mode = event.target.value;">
+          <option value="draw" default>Draw</option>
+          <option value="fill" default>Fill</option>
+          <option value="erase" default>Erase</option>
+        </select>
+    <br>
+    <label>Colour</label>
+    <input type="color" onchange="atrament.color = event.target.value;" value="#000000" autocomplete="off">
+    <br>
+    <label>Opacity</label>
+    <br>
+    <input type="range" min="0" max="1" onchange="atrament.opacity = parseFloat(event.target.value);" value="1" step="0.05" autocomplete="off">
+    <br>
+  </form>
+      <input  class="canvasform" type="button" value="export" onclick="window.open(atrament.toImage());uploadImg()"/>
+      <canvas id="sketcher"></canvas>
+    </div>
+<div id="test-scheduler-view" data-role="view" data-init="initTestScheduler" data-stretch="true"  data-show="changeTitle" >
+      <header data-role="header">
+    <div id="testbar" data-role="navbar"> <a  class="nav-button" data-align="left" href="#patient-listview" data-role="backbutton">Back</a> <span id="mytitle"></span> </div>
+    <!--<div style="background-color: aqua;padding: 5px;"> <span >testing</span></div>--> 
+  </header>
+      <div data-role="content"  class="panel">
+    <div id="testScheduler"></div>
+  </div>
+      <script id="event-template" type="text/x-kendo-template">
 
         <div style="font-size:12px;">#=title #</div>
 
-    </script>
-    <script id="patientEditorTemplate" type="text/x-kendo-template">
+    </script> 
+      <script id="patientEditorTemplate" type="text/x-kendo-template">
     
     <div class="k-edit-label" >
         <label for="name" class="km-required">Name</label>
@@ -238,8 +207,8 @@
         
     
     </div>
-    </script>
-    <script id="customEditorTemplate" type="text/x-kendo-template">
+    </script> 
+      <script id="customEditorTemplate" type="text/x-kendo-template">
     <div class="k-edit-label"><label for="title">Title</label></div>
     <div data-container-for="title" class="k-edit-field">
         <input type="text" class="k-input k-textbox" name="title" required="required" data-bind="value:title">
@@ -285,49 +254,24 @@
           <option value="3">Charlie</option>
       </select>
       </div>
-    </script>
-    
-</div>
+    </script> 
+    </div>
 
 <!--Layout-->
 
-    <div data-role="layout" data-id="mobile-tabstrip">
-
-        <!--Header-->
-
-        <div data-role="header">
-
-
-
-        </div>
-
-
-
-        <!--Footer-->
-
-        <div data-role="footer" id="main-footer" style="display:none">
-
-            <div data-role="tabstrip">
-
-
-                <a href="#clinic-listview" data-icon="pen">List</a>
-                <a href="#doctor-listview" data-icon="pen">List</a>
-                <a href="#test-scheduler-view" data-icon="bookmarks">Scheduler</a>
-
-                <a href="#grid-view" data-icon="camera">Grid</a>
-
-
-            </div>
-
-        </div>
-
+<div data-role="layout" data-id="mobile-tabstrip"> 
+      
+      <!--Header-->
+      
+      <div data-role="header"> </div>
+      
+      <!--Footer-->
+      
+      <div data-role="footer" id="main-footer" style="display:none">
+    <div data-role="tabstrip"> <a href="#clinic-listview" data-icon="pen">List</a> <a href="#doctor-listview" data-icon="pen">List</a> <a href="#test-scheduler-view" data-icon="bookmarks" title="test">Scheduler</a> <a href="#grid-view" data-icon="camera">Grid</a> </div>
+  </div>
     </div>
-    <div id="notify" class="notify-pop-up">
-        <span class="notify-pop-up__content"></span>
-    </div>
-
-
+<div id="notify" class="notify-pop-up"> <span class="notify-pop-up__content"></span> </div>
 <script src="js/app.js"></script>
-
 </body>
 </html>
