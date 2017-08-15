@@ -1,69 +1,353 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title></title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, width=device-width">
-    <link href="kendo/styles/kendo.mobile.all.min.css" rel="stylesheet">
-
-    <link href="styles/overrides.css" rel="stylesheet">
-    <link href="styles/main.css" rel="stylesheet">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height" />
+    <link rel="stylesheet" href="http://cdn.kendostatic.com/2015.3.930/styles/kendo.mobile.android.light.min.css" />
+    <link rel="stylesheet" href="kendo/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="kendo/styles/kendo.nova.min.css" />
+    <link rel="stylesheet" href="kendo/styles/kendo.mobile.all.min.css" />
+    <link href="styles/main.css" rel="stylesheet" />
 
     <script src="cordova.js"></script>
+    <script src="js/atrament.min.js"></script>
+    <script src="js/moment.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
-    <script src="kendo/js/kendo.mobile.min.js"></script>
-    <script src="app.js"></script>
+    <script src="kendo/js/kendo.all.min.js"></script>
+
+
 </head>
-
 <body id="kendoUiMobileApp">
-    <script src="components/contactsView/index.js"></script>
-    <script src="components/settingsView/index.js"></script>
-    <script src="components/homeView/index.js"></script>
-    <div data-role="layout" data-id="main">
-        <header data-role="header">
-            <div data-role="navbar">
-                <span data-role="view-title"></span>
+<span id="centeredNotification" style="display:none;"></span>
+<div id="login-view" data-model="app.loginModel" data-role="view" class="form-view">
+    <div class="panel">
+        <div  class="info-icon"></div>
+        <h2>Please Login</h2>
+    <form>
+      <ul  data-role="listview" data-style="group">
+                <li>
+                    <label class="km-icon-label k-i-user k-icon-48 km-required ">
+
+                        
+					<input type="text" id="userName" data-bind="value:userId" />
+
+                    </label>
+                </li>
+                <li>
+                    <label class="km-icon-label k-i-password k-icon-48  km-required ">
+                        
+					<input type="password" id="pwd" data-bind="value:password" />
+
+                    </label>
+                </li>
+
+            </ul>
+            <br/>
+            <div>
+              <a  data-animated="true" class="km-primary km-justified" data-role="button" data-bind="click:testlogin">Login</a>
+           </div>
+           <br/>
+
+        </form>
+        </div>
+</div>
+<div data-role="view" id="clinic-listview" data-title="Clinics List" data-init="listClinicsInit">
+    <header data-role="header" >
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#/" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>
+            <!--<a data-align="right" data-icon="source-code" data-click="goToSourceCode" data-role="button" title="Show this demo source code"></a>-->
+        </div>
+    </header>
+    
+    <ul id="clinic-list" ></ul>
+    
+    <script id="clinic-list-emplate" type="text/x-kendo-template">
+        <a class="km-listview-link"> #=clinicName# </a>
+        <a href="\\#" data-role="button" data-icon="trash" class="delete km-primary"></a>
+    </script>
+</div>
+<div data-role="view" id="doctor-listview" data-init="listDoctorsInit" data-title="Doctors List">
+    <header data-role="header">
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#clinic-listview" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>
+            
+        </div>
+    </header>
+    
+        <ul id="doctor-filterable-listview"></ul>
+    
+</div>
+<script type="text/x-kendo-tmpl" id="doctor-list-template">
+        <!--<img src="../content/web/foods/#=id#.jpg" alt="#=doctorName# image" class="km-thumbnail"/>-->
+        <a class="km-listview-link"> #=doctorName# </a>
+</script>
+<div data-role="view" id="patient-listview" data-init="listPatientsInit" data-title="Patients List">
+    <header data-role="header">
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#doctor-listview" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>
+            
+        </div>
+    </header>
+    
+        <ul id="patient-filterable-listview" ></ul>
+  
+</div>
+
+<script type="text/x-kendo-tmpl" id="patient-list-template">
+        <!--<img src="../content/web/foods/#=ProductID#.jpg" alt="#=ProductName# image" class="km-thumbnail"/>-->
+        <a class="km-listview-link"> #=ProductName# </a>
+</script>
+
+<div data-role="view" id="patient-detailview" data-init="showPatientsInit" data-title="Patients INFO.">
+    <header data-role="header">
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#patient-listview" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>
+            
+        </div>
+    </header>
+    
+        <div id="products"></div>
+    
+   
+    <ul id="patient-detailview" data-role="listview">
+        <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#scheduler-view" class="km-listview-link"> Scheduler </a></li>
+        <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#grid-view" class="km-listview-link"> Label Print </a></li>
+        <li><img class="image-with-text" src="http://demos.telerik.com/kendo-ui/content/mobile/overview/ann.jpg"/><a href="#canvas-view" class="km-listview-link">Free Drawing </a></li>
+    </ul>
+    
+</div>
+
+<div id="scheduler-view" data-role="view" data-init="app.initScheduler" data-stretch="true" data-title="Scheduler">
+    <header data-role="header">
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#patient-detailview" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>
+            
+        </div>
+    </header>
+    
+    <div id="scheduler" ></div>
+    
+</div>
+<div id="canlendar-view" data-role="view" data-init="initCalendar" data-stretch="true" data-title="Calendar">
+    <header data-role="header">
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#patient-detailview" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>
+            
+        </div>
+    </header>
+    
+    <!--<div data-role="calendar"
+                 data-bind="visible: isVisible,
+                            value: selectedDate,
+                            events: { change: onChange }"
+                 style="height:100%"></div>-->
+                <div data-role="content">
+                 <div id="calendar"></div>
+                </div>
+    
+    <input id="datepicker" />
+</div>
+
+<div id="grid-view" data-role="view" data-init="app.initGrid" data-stretch="true" data-title="Grid">
+    
+    <div id="grid" ></div>
+    
+</div>
+<div id="canvas-view" data-role="view" data-show="app.initCanvas" data-stretch="true" data-title="Drawing">
+    
+    <form class="canvasform" style="display:none">
+			<button id="clear" onclick="event.preventDefault(); atrament.clear();">clear</button><br>
+			<label>Thickness</label><br>
+			<input type="range" min="1" max="40" oninput="atrament.weight = parseFloat(event.target.value);" value="2" step="0.1" autocomplete="off"/><br>
+			<label>Smoothing</label><br>
+			<input type="checkbox" onchange="atrament.smoothing = event.target.checked;" checked autocomplete="off"><br>
+			<label>Adaptive stroke</label><br>
+			<input type="checkbox" onchange="atrament.adaptiveStroke = event.target.checked;" checked autocomplete="off"><br>
+			<label>Mode</label>
+			<select onchange="atrament.mode = event.target.value;">
+				<option value="draw" default>Draw</option>
+				<option value="fill" default>Fill</option>
+				<option value="erase" default>Erase</option>
+			</select><br>
+			<label>Colour</label>
+			<input type="color" onchange="atrament.color = event.target.value;" value="#000000" autocomplete="off"><br>
+			<label>Opacity</label><br>
+			<input type="range" min="0" max="1" onchange="atrament.opacity = parseFloat(event.target.value);" value="1" step="0.05" autocomplete="off"><br>
+			
+		</form>
+        <input  class="canvasform" type="button" value="export" onclick="window.open(atrament.toImage());uploadImg()"/>
+		<canvas id="sketcher"></canvas>
+    
+</div>
+<div id="test-scheduler-view" data-role="view" data-init="initTestScheduler" data-stretch="true" data-title="Scheduler">
+    
+    <div id="testScheduler" ></div>
+    <script id="event-template" type="text/x-kendo-template">
+
+        <div style="font-size:12px;">#=title #</div>
+
+    </script>
+    <script id="patientEditorTemplate" type="text/x-kendo-template">
+    
+    <div class="k-edit-label" >
+        <label for="name" class="km-required">Name</label>
+    </div>
+    <div data-container-for="name" class="k-edit-field" style="padding-left:10px;">
+        <input type="text" class="k-input k-textbox" name="Name"  required="required" data-bind="value:lastName" style="width:60%" >
+    </div>
+    <div class="k-edit-label km-required" >
+        <label for="start" class="km-required">Start</label>
+    </div>
+    <div data-container-for="start" class="k-edit-field" style="padding-left:10px;">
+        <input type="text"
+               data-role="datetimepicker"
+               data-interval="15"
+               data-type="date"
+               data-bind="value:start,invisible:isAllDay"
+               name="start" style="width:60%"/>
+        <input type="text" data-type="date" data-role="datepicker" data-bind="value:start,visible:isAllDay" name="start" />
+        <span data-bind="text: startTimezone"></span>
+        <span data-for="start" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label"><label for="Duration" class="km-required">Duration</label></div>
+    <div data-container-for="Duration" class="k-edit-field" style="padding-left:10px;">
+        <!--<input type="text" class="k-input k-textbox" name="Duration"  required="required" data-bind="value:bookDuration" style="width:60%;" -->
+        <input id="bookDurationId" data-role="numerictextbox"
+                   name="Duration"
+                   data-format="n0"
+                   data-min="0"
+                   data-max="100"
+                   data-step="5"
+                   data-bind="value: bookDuration,
+                              events: { change: onChange }"
+                   required="required"
+                   style="width: 60%">
+    <span data-for="Duration" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label"><label for="Card" class="km-required">Card</label></div>
+    <div data-container-for="Card" class=" k-edit-field">
+        <input id="medicalCard" name="Card" data-role="dropdownlist"
+                   data-auto-bind="true"
+                   data-value-primitive="true"
+                   data-text-field="cardDesc"
+                   data-value-field="id"
+                   data-bind="value: medicalCardId,
+                              source: products,
+                              visible: isVisible,
+                              enabled: isEnabled,
+                              events: {
+                                change: onChange,
+                                open: onOpen,
+                                close: onClose
+                              }"
+                    required="required"
+                   style="width: 60%;padding-top:5px;"
+            >
+         <span data-for="Card" class="k-invalid-msg" style="display: none;"></span>
+    </div>
+    <div class="k-edit-label"><label for="arrival">Arrival</label></div>
+    <div data-container-for="arrival" class="k-edit-field">
+        <input type="checkbox"   id="arrival"   class="k-checkbox"  data-bind="checked:arrival">
+        <label class="k-checkbox-label" for="arrival" style="margin-top:5px;" >&nbsp;</label>
+        
+    
+    </div>
+    </script>
+    <script id="customEditorTemplate" type="text/x-kendo-template">
+    <div class="k-edit-label"><label for="title">Title</label></div>
+    <div data-container-for="title" class="k-edit-field">
+        <input type="text" class="k-input k-textbox" name="title" required="required" data-bind="value:title">
+    </div>
+    <div class="k-edit-label"><label for="Tel">Tel</label></div>
+    <div data-container-for="Tel" class="k-edit-field">
+        <input type="text" class="k-input k-textbox" name="Tel" required="required" data-bind="value:patientTel">
+    </div>
+    <div class="k-edit-label">
+        <label for="start">Start</label>
+      </div>
+    <div data-container-for="start" class="k-edit-field">
+        <input type="text"
+               data-role="datetimepicker"
+               data-interval="15"
+               data-type="date"
+               data-bind="value:start,invisible:isAllDay"
+               name="start"/>
+        <input type="text" data-type="date" data-role="datepicker" data-bind="value:start,visible:isAllDay" name="start" />
+        <span data-bind="text: startTimezone"></span>
+        <span data-for="start" class="k-invalid-msg" style="display: none;"></span>
+      </div>
+    <div class="k-edit-label"><label for="end">End</label></div>
+    <div data-container-for="end" class="k-edit-field">
+        <input type="text" data-type="date" data-role="datetimepicker" data-bind="value:end,invisible:isAllDay" name="end" data-datecompare-msg="End date should be greater than or equal to the start date" />
+        <input type="text" data-type="date" data-role="datepicker" data-bind="value:end,visible:isAllDay" name="end" data-datecompare-msg="End date should be greater than or equal to the start date" />
+        <span data-bind="text: endTimezone"></span>
+        <span data-bind="text: startTimezone, invisible: endTimezone"></span>
+        <span data-for="end" class="k-invalid-msg" style="display: none;"></span>
+      </div>
+    
+    <div><label >Description</label></div>
+    
+    <div data-container-for="description" class="k-edit-field">
+        <textarea name="description" class="k-textbox" data-bind="value:description"></textarea>
+      </div>
+    <div class="k-edit-label"><label for="ownerId">Owner</label></div>
+    <div data-container-for="ownerId" class="k-edit-field">
+        <select id="ownerId" data-bind="value:ownerId" data-role="dropdownlist"
+                        data-value-field="value" data-text-field="text">
+          <option value="1">Alex</option>
+          <option value="2">Bob</option>
+          <option value="3">Charlie</option>
+      </select>
+      </div>
+    </script>
+    
+</div>
+
+<!--Layout-->
+
+    <div data-role="layout" data-id="mobile-tabstrip">
+
+        <!--Header-->
+
+        <div data-role="header">
+
+
+
+        </div>
+
+
+
+        <!--Footer-->
+
+        <div data-role="footer" id="main-footer" style="display:none">
+
+            <div data-role="tabstrip">
+
+
+                <a href="#clinic-listview" data-icon="pen">List</a>
+                <a href="#doctor-listview" data-icon="pen">List</a>
+                <a href="#test-scheduler-view" data-icon="bookmarks">Scheduler</a>
+
+                <a href="#canlendar-view" data-icon="camera">Calendar</a>
+
+
             </div>
-        </header>
-        <footer data-role="footer">
-            <div data-role="tabstrip" id="navigation-container">
-                <a href="components/homeView/view.html" data-icon="home"><span class="navigation-link-text" data-bind="text: strings.homeView.title"></span></a>
-                <a href="components/settingsView/view.html" data-icon="settings"><span class="navigation-link-text" data-bind="text: strings.settingsView.title"></span></a>
-                <a href="components/contactsView/view.html" data-icon="contacts"><span class="navigation-link-text" data-bind="text: strings.contactsView.title"></span></a>
-            </div>
-            <div id="navigation-container-more" style="display: none">
-            </div>
-        </footer>
+
+        </div>
+
+    </div>
+    <div id="notify" class="notify-pop-up">
+        <span class="notify-pop-up__content"></span>
     </div>
 
 
-    <div id="navigation-show-more-view" data-role="view" data-title="Show More" data-layout="main">
-        <header data-role="header">
-            <div data-role="navbar">
-                <span data-bind="text: strings._app.showMoreTitle"></span>
-            </div>
-        </header>
-        <ul data-role="listview" data-style="inset" data-click="app.listViewClick">
-        </ul>
-    </div>
+<script src="js/app.js"></script>
 
-    <div data-role="layout" data-id="main-nonav">
-        <header data-role="header">
-            <div data-role="navbar">
-                <span data-role="view-title"></span>
-            </div>
-        </header>
-        <footer data-role="footer">
-        </footer>
-    </div>
-    <!--  start index html save -->
-    <!--  end index html save -->
-
-    <!-- START_CUSTOM_CODE_kendoUiMobileApp -->
-    <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
-
-    <!-- END_CUSTOM_CODE_kendoUiMobileApp -->
 </body>
-
 </html>
