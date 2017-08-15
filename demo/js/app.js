@@ -667,6 +667,99 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
                         }
                     });
     }
+
+
+
+
+    var today=new Date();
+        var events=[];
+    function initCalendar(){
+        
+                   events[+new Date(today.getFullYear(), today.getMonth(), 8)]="exhibition";
+                   events[+new Date(today.getFullYear(), today.getMonth(), 12)]="party";
+
+                    /*$("#calendar").kendoCalendar({
+                        value: today,
+                        dates: events,
+                        
+                        month: {
+                            // template for dates in month view
+                            content: '# if (typeof data.dates[+data.date] === "string") { #' +
+                                      '<div class="#= data.dates[+data.date] #">' +
+                                      '#= data.value #' +
+                                      '</div>' +
+                                      '# } else { #' +
+                                      '#= data.value #' +
+                                      '# } #'
+                        }
+                    });*/
+                    $("#calendar").kendoScheduler({
+                        date: new Date("2013/6/6"),
+                        editable: false,
+                        mobile:"phone",
+                        views: [{
+                            type: "month"
+                        }],
+                        dataSource: [
+                            {
+                                id: 1,
+                                start: new Date("2013/6/6 08:00 AM"),
+                                end: new Date("2013/6/6 09:00 AM"),
+                                title: "",
+                                status:"H",
+                            },
+                            {
+                                id: 2,
+                                start: new Date("2013/6/7 08:00 AM"),
+                                end: new Date("2013/6/7 09:00 AM"),
+                                title: "",
+                                status:"F"
+                            },
+                            {
+                                id: 3,
+                                start: new Date("2013/6/8 08:00 AM"),
+                                end: new Date("2013/6/8 09:00 AM"),
+                                title: "",
+                                status:"P",
+                            }
+                        ],
+                        
+                        navigate: function(e) {
+                            console.log("navigate", e.view);
+                            var navigateTo=true;
+                            if(e.view=="day"){
+                                var datas=e.sender.data();
+                                for(var i=0;i<datas.length;i++){
+                                    if(kendo.toString(e.date, "d")==kendo.toString(datas[i].start, "d")){
+                                            if(datas[i].status=="H")
+                                                navigateTo=false;
+                                    }
+                                }
+                                if(navigateTo)
+                                    kendo.mobile.application.navigate("#patient-listview?uid=1");
+                                else
+                                    centered.show("Book is not allowed on holiday","error");
+                            }
+                                
+                        },
+                        dataBound: function (e) {                       
+                            $(e.sender.element).find(".k-resize-handle").remove();
+                            var events = $(e.sender.element).find(".k-event").height("100%").width("80%").css("text-align","center");
+                            e.sender._data.forEach(function(eventDetails) {
+                                if(eventDetails['status'] === "H"){
+                                    $('div.k-event[data-uid="'+eventDetails['uid']+'"]').css("background", "red").css("border-style","groove");
+                                }
+                                else if(eventDetails['status'] === "F"){
+                                    $('div.k-event[data-uid="'+eventDetails['uid']+'"]').css("background", "orange").css("border-style","groove");
+                                }
+                                else
+                                    $('div.k-event[data-uid="'+eventDetails['uid']+'"]').css("background", "yellow").css("border-style","groove");
+                            });
+                        }
+                    });
+                    
+
+    }
 var serviceRoot = "http://192.168.88.14:8400/BookingSystem"
 var readDate=new Date("2017/7/27");
 var readView = "day";

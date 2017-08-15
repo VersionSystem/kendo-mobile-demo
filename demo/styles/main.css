@@ -782,6 +782,9 @@ Fields
 .k-nonwork-hour {
   background:  #c0c0c0 !important;
 }
+.k-icon-48 {
+        font-size: 48px; /* Sets icon size to 48px */
+}
 canvas {
 				width: 100vw;
 				height: 100vh;
@@ -802,6 +805,39 @@ canvas {
 				background: rgba(0, 0, 0, 0.9);
 				padding: 1em;
 				color:white;
-			}			
+			}
+			
+#calendar {
+                     width: 100%;
+                     height: 100%;
+                }
 
+                /* Template Days */
+
+                .exhibition,
+                .party,
+                .cocktail {
+                    font-weight: bold;
+                }
+
+                .exhibition {
+                    color: #ff9e00;
+                    border-radius: 50px;
+                  
+                }
+
+                .party {
+                  color: #ff4081;
+                  border-radius: 50px;
+                }
+
+                .cocktail {
+                    color: #00a1e8;
+                }
+
+                .italic{
+                    font-style: italic;
+                }
+
+.k-scheduler-table .k-other-month,.k-scheduler-table .k-other-month .k-link{color:#9da2a4}.k-scheduler-table .k-today{background-color:#ff4350}.k-scheduler-table .k-today .k-link,.k-scheduler-table .k-today.k-state-hover .k-link{color:#fff}
 /* END_CUSTOM_CODE_kendoUiMobileApp */

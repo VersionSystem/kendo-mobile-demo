@@ -18,7 +18,7 @@
 
 </head>
 <body id="kendoUiMobileApp">
-<span id="centeredNotification" style="display:none;width:100%"></span>
+<span id="centeredNotification" style="display:none;"></span>
 <div id="login-view" data-model="app.loginModel" data-role="view" class="form-view">
     <div class="panel">
         <div  class="info-icon"></div>
@@ -26,16 +26,16 @@
     <form>
       <ul  data-role="listview" data-style="group">
                 <li>
-                    <label>
+                    <label class="km-icon-label k-i-user k-icon-48 km-required ">
 
-                        Username:
+                        
 					<input type="text" id="userName" data-bind="value:userId" />
 
                     </label>
                 </li>
                 <li>
-                    <label>
-                        Password:
+                    <label class="km-icon-label k-i-password k-icon-48  km-required ">
+                        
 					<input type="password" id="pwd" data-bind="value:password" />
 
                     </label>
@@ -132,6 +132,26 @@
     
     <div id="scheduler" ></div>
     
+</div>
+<div id="canlendar-view" data-role="view" data-init="initCalendar" data-stretch="true" data-title="Calendar">
+    <header data-role="header">
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#patient-detailview" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>
+            
+        </div>
+    </header>
+    
+    <!--<div data-role="calendar"
+                 data-bind="visible: isVisible,
+                            value: selectedDate,
+                            events: { change: onChange }"
+                 style="height:100%"></div>-->
+                <div data-role="content">
+                 <div id="calendar"></div>
+                </div>
+    
+    <input id="datepicker" />
 </div>
 
 <div id="grid-view" data-role="view" data-init="app.initGrid" data-stretch="true" data-title="Grid">
@@ -314,7 +334,7 @@
                 <a href="#doctor-listview" data-icon="pen">List</a>
                 <a href="#test-scheduler-view" data-icon="bookmarks">Scheduler</a>
 
-                <a href="#grid-view" data-icon="camera">Grid</a>
+                <a href="#canlendar-view" data-icon="camera">Calendar</a>
 
 
             </div>
