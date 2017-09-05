@@ -220,7 +220,7 @@ var platform;
 var deviceRegId;
 var serverURL="http://192.168.88.126:8400";
 
-var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType,securitycode){
+var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType,securitycode,clinicCode){
 	this.id=id;
 	this.userId=userId;
 	this.password=password;
@@ -228,8 +228,27 @@ var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType
 	this.mobileDeviceId=mobileDeviceId;
 	this.mobileDeviceType=mobileDeviceType;
 	this.securitycode=securitycode;
+    this.clinicCode=clinicCode;
+};
+var Book=function(clinic,doctorCode,date,bookTime,patientName,phone1,usageTime,visitFlag,remark){
+	this.clinic=clinic;
+	this.doctorCode=doctorCode;
+    this.date=date;
+	this.bookTime=bookTime;
+	this.patientName=patientName;
+	this.phone1=phone1;
+	this.usageTime=usageTime;
+	this.visitFlag=visitFlag;
+    this.remark=remark;
 };
 
+
+var selectedDoctor;
+var selectedMonth=moment(new Date()).format("YYYY-MM-DD");
+var selectedAvailableTime;
+var selectedClinicId=0;
+var selectedClinic="";
+var selectedDate=moment(new Date()).format("YYYY-MM-DD");
 
 
 (function(window) {
@@ -335,23 +354,23 @@ var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType
             window.screen.lockOrientation('landscape');
     }
 	window.app.initGrid = function _initGrid() {
-        var crudServiceBaseUrl = "https://demos.telerik.com/kendo-ui/service";
+        
         var dataSource = new kendo.data.DataSource({
             transport: {
                 read:  {
-                    url: crudServiceBaseUrl + "/Products",
+                    url: "https://demos.telerik.com/kendo-ui/service" + "/Products",
                     dataType: "jsonp"
                 },
                 update: {
-                    url: crudServiceBaseUrl + "/Products/Update",
+                    url: "https://demos.telerik.com/kendo-ui/service" + "/Products/Update",
                     dataType: "jsonp"
                 },
                 destroy: {
-                    url: crudServiceBaseUrl + "/Products/Destroy",
+                    url: "https://demos.telerik.com/kendo-ui/service" + "/Products/Destroy",
                     dataType: "jsonp"
                 },
                 create: {
-                    url: crudServiceBaseUrl + "/Products/Create",
+                    url: "https://demos.telerik.com/kendo-ui/service" + "/Products/Create",
                     dataType: "jsonp"
                 },
                 parameterMap: function(options, operation) {
@@ -397,41 +416,7 @@ var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType
         });
     }
 
-		window.app.loginModel = kendo.observable({
-        userId: "test",
-		password:"test",
-        testlogin: function() {
-            console.log('test..login');
-			var user=new UserObject(0,app.loginModel.userId,app.loginModel.password,"email","","","","");
-            $.ajax({
-        		type       : "POST",
-        		url        : "http://192.168.88.14:8400/BookingSystem/mobile/loginByMobile",
-       			crossDomain: true,
-				contentType: "application/json; charset=utf-8",
-        		dataType   : 'json',
-				data:JSON.stringify(user),
-        		success    : function(response) {
-
-					if(response==="Y"){
-                        $("#main-footer").css("display","block");
-                        app.mobileApp.navigate("#clinic-listview");
-                        
-					}
-					else{
-						 navigator.notification.alert("Invalid User!",
-                    function () { }, "Login failed", 'OK');
-					}
-
-        	},
-        		error: function(error) {
-           	 		console.error(error);
-
-								navigator.notification.alert("Invalid User!",
-                    function () { }, "Login failed", 'OK');
-        		}
-	  		});
-        }
-    });
+		
     app.cardListModel = kendo.observable({
        
           cardDS : new kendo.data.DataSource({
@@ -458,28 +443,52 @@ var UserObject=function(id,userId,password,email,mobileDeviceId,mobileDeviceType
 })(window);
 
 
+window.app.loginModel = kendo.observable({
+        userId: "BUT",
+		password:"123",
+        testlogin: function() {
+            
+			var user=new UserObject(0,app.loginModel.userId,app.loginModel.password,"email","","","","");
+            
+            $.ajax({
+        		type       : "POST",
+        		url        : "http://192.168.88.14:8400/MobileBooking/mobile/loginByMobile",
+       			crossDomain: true,
+				contentType: "application/json; charset=utf-8",
+        		dataType   : 'json',
+				data:JSON.stringify(user),
+        		success    : function(response) {
 
-var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
+					if(response==="Y"){
+                        $("#main-footer").css("display","block");
+                        app.mobileApp.navigate("#clinic-listview");
+                        
+					}
+					else{
+						 navigator.notification.alert("Invalid User!",
+                    function () { }, "Login failed", 'OK');
+					}
+
+        	},
+        		error: function(error) {
+           	 		console.error(error);
+
+								navigator.notification.alert("Invalid User!",
+                    function () { }, "Login failed", 'OK');
+        		}
+	  		});
+        }
+    });
+var crudServiceBaseUrl = "http://192.168.88.14:8400/MobileBooking",
         dataSource = new kendo.data.DataSource({
             transport: {
                 read:  {
-                    url: crudServiceBaseUrl + "/clinic/list",
+                    url: crudServiceBaseUrl + "/book/getClinics",
                     dataType: "json",
-                    type: "POST",
+                    type: "GET",
                     contentType: "application/json"
                 },
-                update: {
-                    url: crudServiceBaseUrl + "/clinic/dpdate",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json"
-                },
-                destroy: {
-                    url: crudServiceBaseUrl + "/clinic/destroy",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json"
-                },
+                
                 parameterMap: function(options, operation) {
                     if (operation !== "read" && options.models) {
                         return {models: kendo.stringify(options.models)};
@@ -489,10 +498,10 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
             batch: true,
             schema: {
                 model: {
-                    id: "id",
+                    id: "code",
                     fields: {
-                        id: { editable: false, nullable: true },
-                        clinicName: "clinicName"
+                        code: { editable: false, nullable: true },
+                        name: "name"
                     }
                 }
             }
@@ -506,36 +515,143 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
         .kendoTouch({
             filter: ">li",
             enableSwipe: true,
-            touchstart: touchstartForClinic,
             tap: navigateForClinic,
-            swipe: swipeForClinic
+            swipe: navigateForClinic
         });
     }
 
-    var selectedClinicId=0;
+    
     function navigateForClinic(e) {
-        console.log($(e.touch.target).data("uid"))
-        var itemUID = $(e.touch.target).data("uid");
+        var i=$(e.touch.target).index();
+        //console.log(i, dataSource.data()[i]);
+        var itemUID = dataSource.data()[i].code;
         selectedClinicId = itemUID;
+        selectedClinic = itemUID;
         doctorDataSource.read();
         kendo.mobile.application.navigate("#doctor-listview?uid=" + itemUID);
     }
 
-    function swipeForClinic(e) {
+    var doctorDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl + "/book/getDoctors",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                    else{
+                        var model={};
+                        model.selectedClinic=selectedClinic;
+                        return kendo.stringify(model);
+                    }
+                }
+            },
+            schema: {
+                model: {
+                    id: "code",
+                    fields: {
+                        code: { editable: false, nullable: true },
+                        name: "name"
+                    }
+                }
+            },
+            sort: {
+                field: "code",
+                dir: "asc"
+            }
+        });
+    function listDoctorsInit() {
+        
+        $("#doctor-filterable-listview").kendoMobileListView({
+            dataSource: doctorDataSource,
+            template: $("#doctor-list-template").html(),
+            filterable: {
+                field: "code",
+                operator: "startswith"
+            }
+        }).kendoTouch({
+            filter: ">li",
+            enableSwipe: true,           
+            tap: navigateForDoctor,
+            swipe: navigateForDoctor
+        });
+    }
+    function navigateForDoctor(e) {
+         var i=$(e.touch.target).index();
+        //console.log(i, doctorDataSource.data()[i]);
+        var itemUID = doctorDataSource.data()[i].code;      
+        selectedDoctor = itemUID;
+        kendo.mobile.application.navigate("#canlendar-view?uid=" + itemUID);
+    }
+
+    var availabelTimeDataSource;
+    function listPatientsInit(e) {
+        $("#replyId").hide();
+         availabelTimeDataSource = new kendo.data.DataSource({           
+            transport: {
+                read: {
+                    url: crudServiceBaseUrl+"/book/findAvailableTime2",///SWH/SW.KONG/2017-05-09"
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                    else{
+                        var result = {};
+                        result.clinic=selectedClinic;
+                        result.doctor=selectedDoctor;
+                        result.date=selectedDate;                                                                               
+                        return JSON.stringify(result);     
+                    }
+                }
+            },
+            filter: { field: "bookCount", operator: "eq", value: "" },
+            autoBind:false
+        });
+        
+        e.view.element.find("#patient-filterable-listview").kendoMobileListView({
+            dataSource: availabelTimeDataSource,
+            template: $("#patient-list-template").html(),
+            filterable: {
+                field: "bookTimeShow",
+                operator: "startswith"
+            }
+        }).kendoTouch({
+            filter: ">li",
+            enableSwipe: true,
+            touchstart: touchstartForPatient,
+            tap: navigateForPatient,
+            swipe: swipeForPatient
+        });
+    }
+    
+    function navigateForPatient(e) {
+        var i=$(e.touch.target).index();       
+        selectedAvailableTime = availabelTimeDataSource.data()[i];
+        console.log(i, selectedAvailableTime);
+        kendo.mobile.application.navigate("#bookform-view?uid=");
+    }
+
+    function swipeForPatient(e) {
         var button = kendo.fx($(e.touch.currentTarget).find("[data-role=button]"));
         button.expand().duration(30).play();
     }
-
-    function touchstartForClinic(e) {
+    function touchstartForPatient(e) {
         var target = $(e.touch.initialTouch),
-            listview = $("#clinic-list").data("kendoMobileListView"),
+            listview = $("#patient-filterable-listview").data("kendoMobileListView"),
             model,
             button = $(e.touch.target).find("[data-role=button]:visible");
 
         if (target.closest("[data-role=button]")[0]) {
-            model = dataSource.getByUid($(e.touch.target).attr("data-uid"));
-            dataSource.remove(model);
-
+            model = availabelTimeDataSource.getByUid($(e.touch.target).attr("data-uid"));
+            availabelTimeDataSource.remove(model);
             //prevent `swipe`
             this.events.cancel();
             e.event.stopPropagation();
@@ -548,103 +664,76 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
             listview.items().find("[data-role=button]:visible").hide();
         }
     }
-    var doctorDataSource = new kendo.data.DataSource({
-            transport: {
-                read: {
-                    url: crudServiceBaseUrl + "/assignDoctor/list",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json"
-                },
-                parameterMap: function(options, operation) {
-                    if (operation !== "read" && options.models) {
-                        return {models: kendo.stringify(options.models)};
-                    }
-                    else{
-                        return {clinicId:selectedClinicId}
-                    }
-                }
-            },
-            sort: {
-                field: "doctorName",
-                dir: "asc"
-            },
-            serverPaging: true,
-            serverFiltering: true,
-            serverSorting: true,
-            pageSize: 50
-        });
-    function listDoctorsInit() {
-        
 
-        $("#doctor-filterable-listview").kendoMobileListView({
-            dataSource: doctorDataSource,
-            template: $("#doctor-list-template").html(),
-            filterable: {
-                field: "doctorName",
-                operator: "startswith"
-            },
-            autoBind:false
-        }).kendoTouch({
-            filter: ">li",
-            enableSwipe: true,
-            tap: navigateForDoctor,
-            swipe: swipeForDoctor
-        });
-    }
-    function navigateForDoctor(e) {
-        console.log($(e.touch.target).data("uid"))
-        var itemUID = $(e.touch.target).data("uid");
-        kendo.mobile.application.navigate("#patient-listview?uid=" + itemUID);
-    }
 
-    function swipeForDoctor(e) {
-        var button = kendo.fx($(e.touch.currentTarget).find("[data-role=button]"));
-        button.expand().duration(30).play();
-    }
+    window.app.bookModel = kendo.observable({
+        patientName: "",
+		phone1:"",
+        usageTime:0,
+        remark:"",
+        firstFlag:"",
 
-    function listPatientsInit() {
-        var dataSource = new kendo.data.DataSource({
-            type: "odata",
-            transport: {
-                read: {
-                    url: "https://demos.telerik.com/kendo-ui/service/Northwind.svc/Products"
-                }
-            },
-            sort: {
-                field: "ProductName",
-                dir: "desc"
-            },
-            serverPaging: true,
-            serverFiltering: true,
-            serverSorting: true,
-            pageSize: 50
-        });
+        cancelBook:function(){
+             kendo.mobile.application.navigate("#patient-listview?uid=1");
+        },
+        saveBook: function() {
+            
+			//console.log(app.bookModel.patientName,$('input[name="visitFlag"]:checked').val());            
+            var book =new Book(selectedAvailableTime.clinic,selectedAvailableTime.doctor,selectedDate,selectedAvailableTime.bookTime,app.bookModel.patientName,app.bookModel.phone1,app.bookModel.usageTime,$('input[name="visitFlag"]:checked').val(),app.bookModel.remark);
+            console.log(book);
+            $.ajax({
+        		type       : "POST",
+        		url        : crudServiceBaseUrl+"/book/saveBook",
+       			crossDomain: true,
+				contentType: "application/json; charset=utf-8",
+        		dataType   : 'json',
+				data:JSON.stringify(book),
+        		success : function(response) {
+					if(response){                        
+                        app.mobileApp.navigate("#canlendar-view"); 
+                        monthDataSource.read();
+                        app.bookModel.set("patientName","");
+                        app.bookModel.set("phone1","");
+                        app.bookModel.set("remark","");
+                        app.bookModel.set("usageTime",0);
+                        //app.bookModel.set("firstFlag","1st");
+                        $("#visit1").prop('checked', true);               
+					}
+					else{
+						navigator.notification.alert("Invalid User!",function () { }, "Login failed", 'OK');
+					}
+        	},
+        		error: function(error) {
+           	 		console.error(error);
+					navigator.notification.alert("Invalid User!",function () { }, "Login failed", 'OK');
+        		}
+	  		});
+        }
+    });
 
-        $("#patient-filterable-listview").kendoMobileListView({
-            dataSource: dataSource,
-            template: $("#patient-list-template").html(),
-            filterable: {
-                field: "ProductName",
-                operator: "startswith"
-            },
-            endlessScroll: true
-        }).kendoTouch({
-            filter: ">li",
-            enableSwipe: true,
-            tap: navigateForPatient,
-            swipe: swipeForPatient
-        });
-    }
-    function navigateForPatient(e) {
-        console.log($(e.touch.target).data("uid"))
-        var itemUID = $(e.touch.target).data("uid");
-        kendo.mobile.application.navigate("#patient-detailview?uid=" + itemUID);
-    }
 
-    function swipeForPatient(e) {
-        var button = kendo.fx($(e.touch.currentTarget).find("[data-role=button]"));
-        button.expand().duration(30).play();
+
+
+
+
+    function showPatientList(){
+        $("#moreId").show();
+        $("#replyId").hide();
+        var listview= $("#patient-filterable-listview").data('kendoMobileListView');
+        listview.dataSource.read();
+        listview.dataSource.filter({field: "bookCount", operator: "eq", value: ""});
+    }
+    function showAllTime(){
+        var listview= $("#patient-filterable-listview").data('kendoMobileListView');
+        listview.dataSource.filter({});
+        $("#moreId").hide();
+        $("#replyId").show();
+    }
+    function showTime(){
+        var listview= $("#patient-filterable-listview").data('kendoMobileListView');
+        listview.dataSource.filter({field: "bookCount", operator: "eq", value: ""});
+        $("#moreId").show();
+        $("#replyId").hide();
     }
 
     function showPatientsInit(){
@@ -672,12 +761,11 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
 
 
     var today=new Date();
-        var events=[];
+    var events=[];
     function initCalendar(){
         
                    events[+new Date(today.getFullYear(), today.getMonth(), 8)]="exhibition";
                    events[+new Date(today.getFullYear(), today.getMonth(), 12)]="party";
-
                     /*$("#calendar").kendoCalendar({
                         value: today,
                         dates: events,
@@ -693,52 +781,81 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
                                       '# } #'
                         }
                     });*/
+
+                   var monthDataSource=new kendo.data.SchedulerDataSource({
+                             batch:true,
+                             transport: {
+                                 read: {
+                                     url:"http://192.168.88.14:8400/MobileBooking/book/getMonthData2",
+                                     dataType: "json",
+                                     type: "POST",
+                                     contentType: "application/json"
+                                 },                              
+                                 parameterMap:function(options, operation) {
+
+                                     if (operation !== "read" && options.models) {
+
+                                         return JSON.stringify(options.models);
+                                       //  return {models: kendo.stringify(options.models)};
+                                     }
+                                     else if(operation==="read"){
+                                        
+                                       
+    	                                if(typeof scheduler !=="undefined" ){
+                                            var result = {};
+                                            result.clinic=selectedClinic;
+                                            result.doctor=selectedDoctor;
+                                            result.date=selectedMonth;
+                                                                                
+                                            return JSON.stringify(result);                                                                             
+                                        }
+                                       
+                                     }
+
+                                 }
+                             }
+                         });
                     $("#calendar").kendoScheduler({
-                        date: new Date("2013/6/6"),
+                        //date: new Date(),
                         editable: false,
                         mobile:"phone",
                         views: [{
                             type: "month"
                         }],
-                        dataSource: [
-                            {
-                                id: 1,
-                                start: new Date("2013/6/6 08:00 AM"),
-                                end: new Date("2013/6/6 09:00 AM"),
-                                title: "",
-                                status:"H",
-                            },
-                            {
-                                id: 2,
-                                start: new Date("2013/6/7 08:00 AM"),
-                                end: new Date("2013/6/7 09:00 AM"),
-                                title: "",
-                                status:"F"
-                            },
-                            {
-                                id: 3,
-                                start: new Date("2013/6/8 08:00 AM"),
-                                end: new Date("2013/6/8 09:00 AM"),
-                                title: "",
-                                status:"P",
-                            }
-                        ],
+                        dataSource:monthDataSource,
                         
                         navigate: function(e) {
-                            console.log("navigate", e.view);
+                            
                             var navigateTo=true;
+                            var bookStatus;
                             if(e.view=="day"){
+                                selectedDate = moment(e.date).format("YYYY-MM-DD");
+                                console.log("selectedDate:",selectedDate);
                                 var datas=e.sender.data();
                                 for(var i=0;i<datas.length;i++){
                                     if(kendo.toString(e.date, "d")==kendo.toString(datas[i].start, "d")){
-                                            if(datas[i].status=="H")
+                                            if(datas[i].status=="H" || datas[i].status=="B"){
+                                                bookStatus=datas[i].status;
                                                 navigateTo=false;
+                                            }
+                                                
                                     }
                                 }
-                                if(navigateTo)
+                                if(navigateTo){
                                     kendo.mobile.application.navigate("#patient-listview?uid=1");
-                                else
-                                    centered.show("Book is not allowed on holiday","error");
+                                    availabelTimeDataSource.read();
+                                }                                  
+                                else{
+                                    if(bookStatus=="H")
+                                        centered.show("Book is not allowed on holiday!","error");
+                                    else
+                                        centered.show("Book service is not available now!","error");
+                                }
+                                    
+                            }else if(e.view=="month"){
+                                //console.log("navigate", e);
+                                selectedMonth = moment(e.date).format("YYYY-MM-DD");
+                                monthDataSource.read();
                             }
                                 
                         },
@@ -746,22 +863,22 @@ var crudServiceBaseUrl = "http://192.168.88.14:8400/HKCDC",
                             $(e.sender.element).find(".k-resize-handle").remove();
                             var events = $(e.sender.element).find(".k-event").height("100%").width("80%").css("text-align","center");
                             e.sender._data.forEach(function(eventDetails) {
-                                if(eventDetails['status'] === "H"){
+                                if(eventDetails['status'] === "H" || eventDetails['status'] === "B"){
                                     $('div.k-event[data-uid="'+eventDetails['uid']+'"]').css("background", "red").css("border-style","groove");
                                 }
                                 else if(eventDetails['status'] === "F"){
                                     $('div.k-event[data-uid="'+eventDetails['uid']+'"]').css("background", "orange").css("border-style","groove");
                                 }
                                 else
-                                    $('div.k-event[data-uid="'+eventDetails['uid']+'"]').css("background", "yellow").css("border-style","groove");
+                                    $('div.k-event[data-uid="'+eventDetails['uid']+'"]').css("background", "green").css("border-style","groove");
                             });
                         }
                     });
                     
 
     }
-var serviceRoot = "http://192.168.88.14:8400/BookingSystem"
-var readDate=new Date("2017/7/27");
+var serviceRoot = "http://192.168.88.14:8400/MobileBooking"
+var readDate=new Date();//new Date("2017/7/27");
 var readView = "day";
 var scheduleDataSource;
     var centered = $("#centeredNotification").kendoNotification({
@@ -801,26 +918,26 @@ var scheduleDataSource;
 
                              transport: {
                                  read: {
-                                     url: serviceRoot+"/booking/read/scheduler",
+                                     url: "http://192.168.88.14:8400/BookingSystem"+"/booking/read/scheduler",
                                      dataType: "json",
                                      type: "POST",
                                      contentType: "application/json"
                                  },
                                  update: {
-                                     url: serviceRoot+"/booking/update",
+                                     url: "http://192.168.88.14:8400/BookingSystem"+"/booking/update",
                                      dataType: "json",
                                      type: "POST",
                                      contentType: "application/json"
 
                                  },
                                  create: {
-                                     url: serviceRoot+"/booking/create",
+                                     url: "http://192.168.88.14:8400/BookingSystem"+"/booking/create",
                                      dataType: "json",
                                      type: "POST",
                                      contentType: "application/json"
                                  },
                                  destroy: {
-                                     url: serviceRoot+"/booking/destroy",
+                                     url: "http://192.168.88.14:8400/BookingSystem"+"/booking/destroy",
                                      dataType: "json",
                                      type: "POST",
                                      contentType: "application/json"
@@ -909,7 +1026,7 @@ var scheduleDataSource;
                             //console.log("e.event:",e.event);
                             var models=[e.event];
                             $.ajax({                                                            
-                                url: serviceRoot+action,
+                                url: "http://192.168.88.14:8400/BookingSystem"+action,
                                 type: 'post',
                                 contentType: "application/json",
                                 data:JSON.stringify(models),
@@ -961,7 +1078,7 @@ var scheduleDataSource;
                             //e.event.set('lastUpdateUser',$scope.currentEditUser);
                             var models=[e.event];
                             $.ajax({                                                            
-                                url: serviceRoot+action,
+                                url: "http://192.168.88.14:8400/BookingSystem"+action,
                                 type: 'post',
                                 data:JSON.stringify(models),
                                 success: function fbs_click1() {
@@ -995,13 +1112,12 @@ var scheduleDataSource;
                     }          
                     ],*/
                     dataBound: function(e) {
-
-                      
+                     
                                if(resetBackground){
                                    var self=this;
 
                                    workhoursArray=[];
-                                   $.get(serviceRoot+"/booking/schedulerNoneWorkHours/"+this.view().name+"/"+this.date()+"/1",
+                                   $.get("http://192.168.88.14:8400/BookingSystem"+"/booking/schedulerNoneWorkHours/"+this.view().name+"/"+this.date()+"/1",
                                      function(result){
                                      schedulerNoneWorkHours=result;
                                      var container = self.view().element;

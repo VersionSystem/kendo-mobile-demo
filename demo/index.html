@@ -26,16 +26,16 @@
     <form>
       <ul  data-role="listview" data-style="group">
                 <li>
-                    <label class="km-icon-label k-i-user k-icon-48 km-required ">
-
+                    <label class="km-required ">
+                        User ID
                         
 					<input type="text" id="userName" data-bind="value:userId" />
 
                     </label>
                 </li>
                 <li>
-                    <label class="km-icon-label k-i-password k-icon-48  km-required ">
-                        
+                    <label class="km-required ">
+                        Password
 					<input type="password" id="pwd" data-bind="value:password" />
 
                     </label>
@@ -63,7 +63,7 @@
     <ul id="clinic-list" ></ul>
     
     <script id="clinic-list-emplate" type="text/x-kendo-template">
-        <a class="km-listview-link"> #=clinicName# </a>
+        <a class="km-listview-link"> #=name# </a> 
         <a href="\\#" data-role="button" data-icon="trash" class="delete km-primary"></a>
     </script>
 </div>
@@ -80,15 +80,16 @@
     
 </div>
 <script type="text/x-kendo-tmpl" id="doctor-list-template">
-        <!--<img src="../content/web/foods/#=id#.jpg" alt="#=doctorName# image" class="km-thumbnail"/>-->
-        <a class="km-listview-link"> #=doctorName# </a>
+        <a class="km-listview-link"> #=name# </a>
+        <a href="\\#" data-role="button" data-icon="trash" class="delete km-primary"></a>
 </script>
-<div data-role="view" id="patient-listview" data-init="listPatientsInit" data-title="Patients List">
+<div data-role="view" id="patient-listview" data-init="listPatientsInit" data-show="showPatientList" data-title="Time List" data-style="inset">
     <header data-role="header">
         <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#doctor-listview" data-role="backbutton">Back</a>
+            <a  class="nav-button" data-align="left" href="#canlendar-view" data-role="backbutton">Back</a>
             <span data-role="view-title"></span>
-            
+            <a id="moreId" data-align="right" data-role="button" class="nav-button" data-icon="more" data-click="showAllTime"></a>
+            <a id="replyId" data-align="right" data-role="button" class="nav-button" data-icon="reply" data-click="showTime"></a>
         </div>
     </header>
     
@@ -96,9 +97,14 @@
   
 </div>
 
-<script type="text/x-kendo-tmpl" id="patient-list-template">
-        <!--<img src="../content/web/foods/#=ProductID#.jpg" alt="#=ProductName# image" class="km-thumbnail"/>-->
-        <a class="km-listview-link"> #=ProductName# </a>
+<script type="text/x-kendo-tmpl" id="patient-list-template">      
+        
+        <div class="book-item">   
+        <!--<h3>#=bookTimeShow#</h3>-->
+        <a class="km-listview-link"> #=bookTimeShow# </a>
+        <p class="#=bookCount==''?'':'km-badge km-listview-item-badge'#">#=bookCount==''?'':bookCount#</p>
+        <a href="\\#" data-role="button" data-icon="compose" class="delete km-primary"></a>
+       </div>
 </script>
 
 <div data-role="view" id="patient-detailview" data-init="showPatientsInit" data-title="Patients INFO.">
@@ -110,7 +116,7 @@
         </div>
     </header>
     
-        <div id="products"></div>
+    <div id="products"></div>
     
    
     <ul id="patient-detailview" data-role="listview">
@@ -136,7 +142,7 @@
 <div id="canlendar-view" data-role="view" data-init="initCalendar" data-stretch="true" data-title="Calendar">
     <header data-role="header">
         <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#patient-detailview" data-role="backbutton">Back</a>
+            <a  class="nav-button" data-align="left" href="#doctor-listview" data-role="backbutton">Back</a>
             <span data-role="view-title"></span>
             
         </div>
@@ -152,6 +158,70 @@
                 </div>
     
     <input id="datepicker" />
+</div>
+
+<div id="bookform-view" data-model="app.bookModel" data-role="view" class="form-view" data-title="Book Information">
+    <header data-role="header">
+        <div data-role="navbar">
+            <a  class="nav-button" data-align="left" href="#patient-listview" data-role="backbutton">Back</a>
+            <span data-role="view-title"></span>           
+        </div>
+    </header>
+    <form>
+      <ul  data-role="listview" >
+                <li>
+                    <label class="km-required km-label-above">
+                        Patient Name                       
+					<input type="text"  data-bind="value:patientName" />
+                    </label>
+                </li>
+                <li>
+                    <label class="km-required km-label-above">
+                        Phone
+					<input type="text" data-bind="value:phone1" />
+                    </label>
+                </li>
+                <li>
+                    <label class="km-label-above">Visit Status
+                        <br>
+                        <br>
+                        <input type="radio" class="km-radio" name="visitFlag" value="1st"  id="visit1" checked="checked"/>
+                        <label class="km-radio-label" class="km-label" for="visit1" >First Time</label>
+                        <br>
+                        <input type="radio" class="km-radio" name="visitFlag" value="2nd"  id="visit2"/>
+                        <label class="km-radio-label" class="km-label" for="visit2">Second Time</label>                       
+                    </label>
+                </li>
+                <li>
+                    <label class="km-label-above">
+                        UsageTime
+                        <input type="number" data-bind="value:usageTime"/>
+                        
+                       <!-- <input id="usageTimeId" data-role="numerictextbox"
+                        name="usageTime"
+                        data-format="n0"
+                        data-min="0"
+                        data-max="100"
+                        data-step="5"
+                        data-bind="value: usageTime,
+                                    events: { change: onChange }"/>-->
+                        
+                    </label>
+                </li>               
+                <li>
+                    <label class="km-label-above">
+                    Remark
+					 <textarea style="height: 90%;" data-bind="value:remark"></textarea>
+                    </label>
+                </li>
+            </ul>
+            <div>
+              <a  data-animated="true" class="km-primary km-justified" data-role="button" data-bind="click:saveBook">Save</a>
+              <a  data-animated="true" class="km-justified" data-role="button" data-bind="click:cancelBook">Cancel</a>
+           </div>
+           
+        </form>
+   
 </div>
 
 <div id="grid-view" data-role="view" data-init="app.initGrid" data-stretch="true" data-title="Grid">
@@ -324,7 +394,7 @@
 
 
         <!--Footer-->
-
+        <!--
         <div data-role="footer" id="main-footer" style="display:none">
 
             <div data-role="tabstrip">
@@ -340,7 +410,7 @@
             </div>
 
         </div>
-
+        -->
     </div>
     <div id="notify" class="notify-pop-up">
         <span class="notify-pop-up__content"></span>
