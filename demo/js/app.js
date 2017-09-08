@@ -510,7 +510,7 @@ window.app.loginModel = kendo.observable({
         $("#book-time-listview").kendoMobileListView({
             autoBind:false,
             dataSource: availabelTimeDataSource,
-            template: $("#patient-list-template").html(),          
+            template: $("#booktime-list-template").html(),          
             filterable: {
                 field: "bookTimeShow",
                 operator: "startswith"
@@ -518,13 +518,13 @@ window.app.loginModel = kendo.observable({
         }).kendoTouch({
             filter: ">li",
             enableSwipe: true,
-            touchstart: touchstartForPatient,
-            tap: navigateForPatient,
-            swipe: swipeForPatient
+            touchstart: touchstartForDetail,
+            tap: navigateForDetail,
+            swipe: swipeForDetail
         });
     }
     
-    function navigateForPatient(e) {
+    function navigateForDetail(e) {
         selectedAvailableTime = availabelTimeDataSource.getByUid($(e.touch.target).attr("data-uid"));
         //console.log(selectedAvailableTime);
         returnDetailList=false;
@@ -532,7 +532,7 @@ window.app.loginModel = kendo.observable({
         $("#deleteBtn").hide();
     }
 
-    function swipeForPatient(e) {
+    function swipeForDetail(e) {
         selectedAvailableTime = availabelTimeDataSource.getByUid($(e.touch.target).attr("data-uid"));
         if(selectedAvailableTime.bookCount!=""){
             var button = kendo.fx($(e.touch.currentTarget).find("[data-role=button]"));
@@ -540,7 +540,7 @@ window.app.loginModel = kendo.observable({
         }
         
     }
-    function touchstartForPatient(e) {
+    function touchstartForDetail(e) {
         var target = $(e.touch.initialTouch),
             listview = $("#book-time-listview").data("kendoMobileListView"),
             model,
@@ -548,10 +548,10 @@ window.app.loginModel = kendo.observable({
 
         if (target.closest("[data-role=button]")[0]) {
             selectedAvailableTime = availabelTimeDataSource.getByUid($(e.touch.target).attr("data-uid"));
-            console.log("selectedAvailableTime",selectedAvailableTime);
+            //console.log("selectedAvailableTime",selectedAvailableTime);
             //availabelTimeDataSource.remove(model);
             returnDetailList=false;
-            kendo.mobile.application.navigate("#patient-detailview?uid=");
+            kendo.mobile.application.navigate("#book-detail-view");
             bookDetailDataSource.read();
             //prevent `swipe`
             this.events.cancel();
@@ -585,9 +585,7 @@ window.app.loginModel = kendo.observable({
 
     //--Book Detail view----------------------------------------------------------------------------
 
-    var bookDetailDataSource;
-    function listBookDetailInit(e) {      
-         bookDetailDataSource = new kendo.data.DataSource({           
+    var bookDetailDataSource = new kendo.data.DataSource({           
             transport: {
                 read: {
                     url: crudServiceBaseUrl+"/book/findBookDetails",///SWH/SW.KONG/2017-05-09"
@@ -608,23 +606,25 @@ window.app.loginModel = kendo.observable({
                         return JSON.stringify(result);     
                     }
                 }
-            },
-            autoBind:false
-        });
+            }
+    });
+    function listBookDetailInit(e) {      
+         
         
-        e.view.element.find("#patient-detailview-list").kendoMobileListView({
+        e.view.element.find("#book-detail-listview").kendoMobileListView({
             dataSource: bookDetailDataSource,
-            template: $("#patient-detail-template").html()
+            autoBind:false,
+            template: $("#bookdetail-list-template").html()
         }).kendoTouch({
             filter: ">li",
             enableSwipe: true,
-            touchstart: touchstartForDetail,
-            tap: navigateForDetail,
-            swipe: swipeForDetail
+            touchstart: touchstartForForm,
+            tap: navigateForForm,
+            swipe: swipeForForm
         });
     }
     var returnDetailList=false;
-    function navigateForDetail(e) {
+    function navigateForForm(e) {
         returnDetailList=true;
         var i=$(e.touch.target).index();       
         selectedBook = bookDetailDataSource.data()[i];
@@ -641,19 +641,19 @@ window.app.loginModel = kendo.observable({
             $("#visit2").prop('checked', true);
     }
 
-    function swipeForDetail(e) {
+    function swipeForForm(e) {
         var button = kendo.fx($(e.touch.currentTarget).find("[data-role=button]"));
         button.expand().duration(30).play();
     }
-    function touchstartForDetail(e) {
+    function touchstartForForm(e) {
         var target = $(e.touch.initialTouch),
             listview = $("#book-time-listview").data("kendoMobileListView"),
             model,
             button = $(e.touch.target).find("[data-role=button]:visible");
 
         if (target.closest("[data-role=button]")[0]) {
-            model = bookDetailDataSource.getByUid($(e.touch.target).attr("data-uid"));
-            bookDetailDataSource.remove(model);
+            selectedBook = bookDetailDataSource.getByUid($(e.touch.target).attr("data-uid"));
+            showConfirm();
             //prevent `swipe`
             this.events.cancel();
             e.event.stopPropagation();
@@ -682,7 +682,7 @@ window.app.loginModel = kendo.observable({
              app.bookModel.reset();        
              //console.log("returnDetailList",returnDetailList);    
              if(returnDetailList)
-                kendo.mobile.application.navigate("#patient-detailview?uid=1");
+                kendo.mobile.application.navigate("#book-detail-view?uid=1");
              else
                 kendo.mobile.application.navigate("#available-book-time-view?uid=1");
         },
@@ -709,7 +709,7 @@ window.app.loginModel = kendo.observable({
         		success : function(response) {
 					if(response){                        
                         if(returnDetailList)
-                            kendo.mobile.application.navigate("#patient-detailview?uid=1");
+                            kendo.mobile.application.navigate("#book-detail-view?uid=1");
                         else{
                             kendo.mobile.application.navigate("#available-book-time-view?uid=1");
                             availabelTimeDataSource.read();
@@ -727,14 +727,22 @@ window.app.loginModel = kendo.observable({
 	  		});
         },
         deleteBook: function() {
-            var book =new Book(app.bookModel.bookNo,selectedAvailableTime.clinic,selectedAvailableTime.doctor,selectedDate,selectedAvailableTime.bookTime,app.bookModel.patientName,app.bookModel.phone1,app.bookModel.usageTime,$('input[name="visitFlag"]:checked').val(),app.bookModel.remark,selectedAvailableTime.specialDate);
+            showConfirm();
+        }
+    });
+
+    // process the confirmation dialog result
+function onConfirm(buttonIndex) {
+    //alert('You selected button ' + buttonIndex);
+    if(buttonIndex==1){
+       
             $.ajax({
         		type       : "POST",
         		url        : crudServiceBaseUrl+"/book/deleteBook",
        			crossDomain: true,
 				contentType: "application/json; charset=utf-8",
         		dataType   : 'json',
-				data:JSON.stringify(book),
+				data:JSON.stringify(selectedBook),
         		success : function(response) {
 					if(response){
                         app.bookModel.reset();    
@@ -745,7 +753,7 @@ window.app.loginModel = kendo.observable({
                             $("#replyId").show();
                             refreshCalendar=true;
                         }else{
-                            kendo.mobile.application.navigate("#patient-detailview?uid=");
+                            kendo.mobile.application.navigate("#book-detail-view?uid=");
                             bookDetailDataSource.read(); //refresh book detail list
                         }    
 					}
@@ -758,10 +766,20 @@ window.app.loginModel = kendo.observable({
 					navigator.notification.alert("Failed to delete!",function () { }, "Failed to delete!", 'OK');
         		}
 	  		});
-        }
-    });
-
+    }
     
+}
+
+// Show a custom confirmation dialog
+//
+function showConfirm() {
+    navigator.notification.confirm(
+        'Are you sure to delete the book?',  // message
+        onConfirm,              // callback to invoke with index of button pressed
+        'Warning',            // title
+        'Confirm,Cancel'          // buttonLabels
+    );
+}
 
     //-- notification-----------------------------------------------------
     var centered = $("#centeredNotification").kendoNotification({

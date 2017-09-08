@@ -741,7 +741,7 @@ Fields
 
 
 /* Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes */
-#clinic-listview .delete {
+.delete {
         display: none;
         position: absolute;
         top: 0;
@@ -838,6 +838,11 @@ canvas {
                 .italic{
                     font-style: italic;
                 }
-
-.k-scheduler-table .k-other-month,.k-scheduler-table .k-other-month .k-link{color:#9da2a4}.k-scheduler-table .k-today{background-color:#ff4350}.k-scheduler-table .k-today .k-link,.k-scheduler-table .k-today.k-state-hover .k-link{color:#fff}
+.selectedInfo{
+    text-align: center;
+    color:blue;
+    padding-top:5px;
+    border-bottom: 1px solid red;
+}
+.k-scheduler-table .k-other-month,.k-scheduler-table .k-other-month .k-link{color:#9da2a4;visibility: hidden;}.k-scheduler-table .k-today{background-color:#ff4350}.k-scheduler-table .k-today .k-link,.k-scheduler-table .k-today.k-state-hover .k-link{color:#fff}
 /* END_CUSTOM_CODE_kendoUiMobileApp */
