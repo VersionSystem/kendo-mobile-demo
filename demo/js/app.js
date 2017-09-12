@@ -280,12 +280,13 @@ window.app.loginModel = kendo.observable({
     
     function navigateForClinic(e) {
         var i=$(e.touch.target).index();
-        //console.log(i, dataSource.data()[i]);
+        console.log(i, dataSource.data()[i]);
         var itemUID = dataSource.data()[i].code;
         selectedClinicId = itemUID;
         selectedClinic = itemUID;
         doctorDataSource.read();
         kendo.mobile.application.navigate("#doctor-listview?uid=" + itemUID);
+        $("#doctor-list-header").html("Clinic:"+dataSource.data()[i].name);
     }
     //--Doctor list-------------------------------------------------------
 
@@ -323,7 +324,7 @@ window.app.loginModel = kendo.observable({
             }
         });   
     function listDoctorsInit() {
-        
+       
         $("#doctor-filterable-listview").kendoMobileListView({
             dataSource: doctorDataSource,
             template: $("#doctor-list-template").html(),
@@ -345,7 +346,10 @@ window.app.loginModel = kendo.observable({
         var itemUID = doctorDataSource.data()[i].code;      
         selectedDoctor = itemUID;
         monthDataSource.read();
-        kendo.mobile.application.navigate("#canlendar-view?uid=" + itemUID);
+        kendo.mobile.application.navigate("#calendar-view?uid=" + itemUID);
+        $("#calendar-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div>");
+        //$(".k-reset .k-header .k-scheduler-navigation").append("Clinic:Doctor:");
+        //console.log($(".k-reset .k-header .k-scheduler-navigation"));
     }
 
 
@@ -438,6 +442,7 @@ window.app.loginModel = kendo.observable({
                                     availabelTimeDataSource.read();
                                     availabelTimeDataSource.filter({field: "bookCount", operator: "eq", value: ""});
                                     kendo.mobile.application.navigate("#available-book-time-view?uid=1");
+                                    $("#time-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div>");
                                     $("#moreId").show();
                                     $("#replyId").hide();
                                     
@@ -529,6 +534,7 @@ window.app.loginModel = kendo.observable({
         //console.log(selectedAvailableTime);
         returnDetailList=false;
         kendo.mobile.application.navigate("#bookform-view?uid=");
+        $("#form-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div><div>Time:"+selectedAvailableTime.bookTimeShow+"</div>");
         $("#deleteBtn").hide();
     }
 
@@ -553,6 +559,7 @@ window.app.loginModel = kendo.observable({
             returnDetailList=false;
             kendo.mobile.application.navigate("#book-detail-view");
             bookDetailDataSource.read();
+            $("#detail-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div><div>Time:"+selectedAvailableTime.bookTimeShow+"</div>");
             //prevent `swipe`
             this.events.cancel();
             e.event.stopPropagation();
@@ -629,6 +636,7 @@ window.app.loginModel = kendo.observable({
         var i=$(e.touch.target).index();       
         selectedBook = bookDetailDataSource.data()[i];
         kendo.mobile.application.navigate("#bookform-view?uid=");
+        $("#form-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div><div>Time:"+selectedBook.bookTime+"</div>");
         $("#deleteBtn").show();
         app.bookModel.set("patientName",selectedBook.patientName);
         app.bookModel.set("phone1",selectedBook.phone1);

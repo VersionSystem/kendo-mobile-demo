@@ -27,8 +27,7 @@
       <ul  data-role="listview" data-style="group">
                 <li>
                     <label class="km-required ">
-                        User ID
-                        
+                        User ID                       
 					<input type="text" id="userName" data-bind="value:userId" />
 
                     </label>
@@ -75,12 +74,12 @@
             
         </div>
     </header>
-    <div class="selectedInfo">Clinic:TST</div>
-        <ul id="doctor-filterable-listview"></ul>
+    <div id="doctor-list-header" class="selectedInfo"></div>
+    <ul id="doctor-filterable-listview"></ul>
     
 </div>
 
-<div id="canlendar-view" data-role="view" data-init="initCalendar" data-show="showCalendar" data-stretch="true" data-title="Calendar">
+<div id="calendar-view" data-role="view" data-init="initCalendar" data-show="showCalendar" data-stretch="true" data-title="Calendar">
     <header data-role="header">
         <div data-role="navbar">
             <a  class="nav-button" data-align="left" href="#doctor-listview" data-role="backbutton">Back</a>
@@ -94,7 +93,9 @@
                             value: selectedDate,
                             events: { change: onChange }"
                  style="height:100%"></div>-->
+                 <div id="calendar-header" class="selectedInfo"></div>
                 <div data-role="content">
+                 
                  <div id="calendar"></div>
                 </div>
 </div>
@@ -106,13 +107,13 @@
 <div data-role="view" id="available-book-time-view" data-init="listBookTimeInit" data-show="showBookTimeList" data-title="Time List" data-style="inset">
     <header data-role="header">
         <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#canlendar-view" data-role="backbutton">Back</a>
+            <a  class="nav-button" data-align="left" href="#calendar-view" data-role="backbutton">Back</a>
             <span data-role="view-title"></span>
             <a id="moreId" data-align="right" data-role="button" class="nav-button" data-icon="more" data-click="showAllTime"></a>
             <a id="replyId" data-align="right" data-role="button" class="nav-button" data-icon="reply" data-click="showTime"></a>
         </div>
     </header>
-    
+        <div id="time-header" class="selectedInfo"></div>
         <ul id="book-time-listview" ></ul>
         <script type="text/x-kendo-tmpl" id="booktime-list-template">      
         
@@ -128,15 +129,15 @@
 
 
 
-<div data-role="view" id="book-detail-view" data-init="listBookDetailInit" data-title="Patients INFO.">
+<div data-role="view" id="book-detail-view" data-init="listBookDetailInit" data-title="Booking INFO.">
     <header data-role="header">
         <div data-role="navbar">
-            <a  class="nav-button" data-align="left" href="#patient-listview" data-role="backbutton">Back</a>
+            <a  class="nav-button" data-align="left" href="#available-book-time-view" data-role="backbutton">Back</a>
             <span data-role="view-title"></span>
             
         </div>
     </header>
-    
+    <div id="detail-header" class="selectedInfo"></div>
     <ul id="book-detail-listview"></ul>
     <script type="text/x-kendo-tmpl" id="bookdetail-list-template">      
         
@@ -155,6 +156,7 @@
             <span data-role="view-title"></span>           
         </div>
     </header>
+    <div id="form-header" class="selectedInfo"></div>
     <form>
       <ul  data-role="listview" >
                 <li>
@@ -234,7 +236,7 @@
                 <a href="#clinic-listview" data-icon="pen">List</a>
                 <a href="#doctor-listview" data-icon="pen">List</a>
                 <a href="#test-scheduler-view" data-icon="bookmarks">Scheduler</a>
-                <a href="#canlendar-view" data-icon="camera">Calendar</a>
+                <a href="#calendar-view" data-icon="camera">Calendar</a>
             </div>
         </div>
         -->

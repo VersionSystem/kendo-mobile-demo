@@ -839,10 +839,13 @@ canvas {
                     font-style: italic;
                 }
 .selectedInfo{
-    text-align: center;
-    color:blue;
+    text-align: left;
+    color:white;
     padding-top:5px;
+    padding-left:15px;
     border-bottom: 1px solid red;
+    font-size:12px;
+    background-color:gray;
 }
 .k-scheduler-table .k-other-month,.k-scheduler-table .k-other-month .k-link{color:#9da2a4;visibility: hidden;}.k-scheduler-table .k-today{background-color:#ff4350}.k-scheduler-table .k-today .k-link,.k-scheduler-table .k-today.k-state-hover .k-link{color:#fff}
 /* END_CUSTOM_CODE_kendoUiMobileApp */
