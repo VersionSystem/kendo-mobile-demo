@@ -286,7 +286,7 @@ window.app.loginModel = kendo.observable({
         selectedClinic = itemUID;
         doctorDataSource.read();
         kendo.mobile.application.navigate("#doctor-listview?uid=" + itemUID);
-        $("#doctor-list-header").html("Clinic:"+dataSource.data()[i].name);
+        $("#doctor-list-header").html("<span class='k-icon k-i-myspace' style='color:white'></span>&nbsp;Clinic:"+dataSource.data()[i].name);
     }
     //--Doctor list-------------------------------------------------------
 
@@ -347,7 +347,7 @@ window.app.loginModel = kendo.observable({
         selectedDoctor = itemUID;
         monthDataSource.read();
         kendo.mobile.application.navigate("#calendar-view?uid=" + itemUID);
-        $("#calendar-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div>");
+        $("#calendar-header").html("<div><span class='k-icon k-i-myspace' style='color:white' ></span>&nbsp;Clinic:"+selectedClinic+"</div><div><span  class='k-icon k-i-user' style='color:white'></span>&nbsp;Doctor:"+selectedDoctor+"</div>");
         //$(".k-reset .k-header .k-scheduler-navigation").append("Clinic:Doctor:");
         //console.log($(".k-reset .k-header .k-scheduler-navigation"));
     }
@@ -442,7 +442,7 @@ window.app.loginModel = kendo.observable({
                                     availabelTimeDataSource.read();
                                     availabelTimeDataSource.filter({field: "bookCount", operator: "eq", value: ""});
                                     kendo.mobile.application.navigate("#available-book-time-view?uid=1");
-                                    $("#time-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div>");
+                                    $("#time-header").html("<div><span class='k-icon k-i-myspace' style='color:white'></span>&nbsp;Clinic:"+selectedClinic+"</div><div><span class='k-icon k-i-user' style='color:white'></span>&nbsp;Doctor:"+selectedDoctor+"</div><div><span class='k-icon k-i-calendar-date' style='color:white'></span>&nbsp;Date:"+selectedDate+"</div>");
                                     $("#moreId").show();
                                     $("#replyId").hide();
                                     
@@ -534,7 +534,7 @@ window.app.loginModel = kendo.observable({
         //console.log(selectedAvailableTime);
         returnDetailList=false;
         kendo.mobile.application.navigate("#bookform-view?uid=");
-        $("#form-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div><div>Time:"+selectedAvailableTime.bookTimeShow+"</div>");
+        $("#form-header").html("<div><span class='k-icon k-i-myspace' style='color:white'></span>&nbsp;Clinic:"+selectedClinic+"</div><div><span class='k-icon k-i-user' style='color:white'></span>&nbsp;Doctor:"+selectedDoctor+"</div><div><span class='k-icon k-i-calendar-date' style='color:white'></span>&nbsp;Date:"+selectedDate+"</div><div><span class='k-icon k-i-clock' style='color:white'></span>&nbsp;Time:"+selectedAvailableTime.bookTimeShow+"</div>");
         $("#deleteBtn").hide();
     }
 
@@ -559,7 +559,7 @@ window.app.loginModel = kendo.observable({
             returnDetailList=false;
             kendo.mobile.application.navigate("#book-detail-view");
             bookDetailDataSource.read();
-            $("#detail-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div><div>Time:"+selectedAvailableTime.bookTimeShow+"</div>");
+            $("#detail-header").html("<div><span class='k-icon k-i-myspace' style='color:white'></span>&nbsp;Clinic:"+selectedClinic+"</div><div><span class='k-icon k-i-user' style='color:white'></span>&nbsp;Doctor:"+selectedDoctor+"</div><div><span class='k-icon k-i-calendar-date' style='color:white'></span>&nbsp;Date:"+selectedDate+"</div><div><span class='k-icon k-i-clock' style='color:white'></span>&nbsp;Time:"+selectedAvailableTime.bookTimeShow+"</div>");
             //prevent `swipe`
             this.events.cancel();
             e.event.stopPropagation();
@@ -636,7 +636,7 @@ window.app.loginModel = kendo.observable({
         var i=$(e.touch.target).index();       
         selectedBook = bookDetailDataSource.data()[i];
         kendo.mobile.application.navigate("#bookform-view?uid=");
-        $("#form-header").html("<div>Clinic:"+selectedClinic+"</div><div>Doctor:"+selectedDoctor+"</div><div>Date:"+selectedDate+"</div><div>Time:"+selectedBook.bookTime+"</div>");
+        $("#form-header").html("<div><span class='k-icon k-i-myspace' style='color:white'></span>&nbsp;Clinic:"+selectedClinic+"</div><div><span class='k-icon k-i-user' style='color:white'></span>&nbsp;Doctor:"+selectedDoctor+"</div><div><span class='k-icon k-i-calendar-date' style='color:white'></span>&nbsp;Date:"+selectedDate+"</div><div><span class='k-icon k-i-clock' style='color:white'></span>&nbsp;Time:"+selectedBook.bookTime+"</div>");
         $("#deleteBtn").show();
         app.bookModel.set("patientName",selectedBook.patientName);
         app.bookModel.set("phone1",selectedBook.phone1);

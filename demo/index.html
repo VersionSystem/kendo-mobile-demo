@@ -26,7 +26,7 @@
     <form>
       <ul  data-role="listview" data-style="group">
                 <li>
-                    <label class="km-required ">
+                    <label class="km-required formlabel">
                         User ID                       
 					<input type="text" id="userName" data-bind="value:userId" />
 
@@ -58,8 +58,10 @@
             <!--<a data-align="right" data-icon="source-code" data-click="goToSourceCode" data-role="button" title="Show this demo source code"></a>-->
         </div>
     </header>
-    
-    <ul id="clinic-list" ></ul>
+    <fieldset class="fieldset2">
+        <legend>Clinics</legend>
+        <ul id="clinic-list" ></ul>
+    </fieldset>
     
     <script id="clinic-list-emplate" type="text/x-kendo-template">
         <a class="km-listview-link"> #=name# </a> 
@@ -74,8 +76,14 @@
             
         </div>
     </header>
-    <div id="doctor-list-header" class="selectedInfo"></div>
-    <ul id="doctor-filterable-listview"></ul>
+    <fieldset class="fieldset1">
+        <legend>Selected Info.</legend>
+        <div id="doctor-list-header" class="selectedInfo"></div>
+    </fieldset>
+    <fieldset class="fieldset2">
+        <legend>Doctors</legend>
+        <ul id="doctor-filterable-listview"></ul>
+    </fieldset>
     
 </div>
 
@@ -93,7 +101,10 @@
                             value: selectedDate,
                             events: { change: onChange }"
                  style="height:100%"></div>-->
-                 <div id="calendar-header" class="selectedInfo"></div>
+                 <fieldset class="fieldset1">
+                    <legend>Selected Info.</legend>
+                    <div id="calendar-header" class="selectedInfo"></div>
+                </fieldset>
                 <div data-role="content">
                  
                  <div id="calendar"></div>
@@ -113,8 +124,14 @@
             <a id="replyId" data-align="right" data-role="button" class="nav-button" data-icon="reply" data-click="showTime"></a>
         </div>
     </header>
+    <fieldset class="fieldset1">
+        <legend>Selected Info.</legend>
         <div id="time-header" class="selectedInfo"></div>
+    </fieldset>
+    <fieldset class="fieldset2">
+        <legend>Time Slot For Book</legend>
         <ul id="book-time-listview" ></ul>
+    </fieldset>
         <script type="text/x-kendo-tmpl" id="booktime-list-template">      
         
         <div class="book-item">   
@@ -137,8 +154,14 @@
             
         </div>
     </header>
-    <div id="detail-header" class="selectedInfo"></div>
-    <ul id="book-detail-listview"></ul>
+    <fieldset class="fieldset1">
+        <legend>Selected Info.</legend>
+        <div id="detail-header" class="selectedInfo"></div>
+    </fieldset>
+    <fieldset class="fieldset2">
+        <legend>Time Slot For Edit</legend>
+        <ul id="book-detail-listview"></ul>
+    </fieldset>
     <script type="text/x-kendo-tmpl" id="bookdetail-list-template">      
         
         <div class="book-item">          
@@ -156,7 +179,12 @@
             <span data-role="view-title"></span>           
         </div>
     </header>
-    <div id="form-header" class="selectedInfo"></div>
+    <fieldset class="fieldset1">
+        <legend>Selected Info.</legend>
+        <div id="form-header" class="selectedInfo"></div>
+    </fieldset>
+    <fieldset class="fieldset2">
+        <legend>Patient Info.</legend>
     <form>
       <ul  data-role="listview" >
                 <li>
@@ -212,7 +240,7 @@
            </div>
            
         </form>
-   
+   </fieldset>
 </div>
 
 <!--Layout-->
